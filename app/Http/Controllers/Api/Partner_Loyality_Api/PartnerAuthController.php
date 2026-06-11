@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Partner_Loyality_Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Country;
 
 class PartnerAuthController extends Controller
 {
@@ -13,49 +12,18 @@ class PartnerAuthController extends Controller
 
         {
 
-            // STEP 1: Get mobile length from country
-
-            $mobileLength = Country::where('country_code', $request->phone_code)
-
-                ->value('mobile_length');
-
-        
-
-            if (!$mobileLength) {
-
-                return response()->json([
-
-                    'status' => false,
-
-                    'message' => 'Invalid country code'
-
-                ], 422);
-
-            }
-
-        
-
-            // STEP 2: Validate input
+            // STEP 1: Validate input
 
             $validated = $request->validate([
-
-                'phone_code' => 'required|exists:countries,country_code',
-
-                'phone'      => ['required', 'numeric', 'digits:' . $mobileLength],
-
-            ], [
-
-                'phone.digits' => "Phone number must be {$mobileLength} digits"
-
+                'phone'      => ['required', 'numeric'],
             ]);
 
         
 
-            // STEP 3: Find user
+            // STEP 2: Find user
 
         $user = User::where([
                 'phone' => $validated['phone'],
-                'country_code_phone' => $validated['phone_code'],
                 'user_type' => 0,
                 'designation' => 14,
             ])->first();
@@ -80,12 +48,8 @@ class PartnerAuthController extends Controller
                     'otp' => $otp,
                     'is_verified' => 0
                 ]);
-
-        
-
-
-        
-           return response()->json([
+ 
+            return response()->json([
                 'status' => true,
                 'message' => 'OTP sent successfully',
                 'otp' => $otp

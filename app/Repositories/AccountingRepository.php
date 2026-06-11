@@ -80,15 +80,15 @@ class AccountingRepository implements AccountingRepositoryInterface
 
         /* Entry in journal */
         Journal::insert([
-        'transaction_amount' => $data['amount'] ?? null,
-        'is_credit' => $is_credit,
-        'is_debit' => $is_debit,
-        'entry_date' => $data['payment_date'],
-        'payment_id' => $payment_id,
-        'bank_cash' => ($data['payment_mode'] == 'cash') ? 'cash' : 'bank',
-        'purpose' => 'payment_receipt',
-        'purpose_description' => 'customer payment',
-        'purpose_id' => $data['voucher_no']
+            'transaction_amount' => $data['amount'] ?? null,
+            'is_credit' => $is_credit,
+            'is_debit' => $is_debit,
+            'entry_date' => $data['payment_date'],
+            'payment_id' => $payment_id,
+            'bank_cash' => ($data['payment_mode'] == 'cash') ? 'cash' : 'bank',
+            'purpose' => 'payment_receipt',
+            'purpose_description' => 'customer payment',
+            'purpose_id' => $data['voucher_no']
         ]);
     }
         /* Payment Collection Entry */
@@ -168,8 +168,10 @@ class AccountingRepository implements AccountingRepositoryInterface
         $check_invoice_payments = InvoicePayment::where('voucher_no', $voucher_no)->get()->toArray();
 
         if(empty($check_invoice_payments)){
+
             $amount_after_settlement = $payment_amount;
             $invoice = Invoice::where('customer_id', $customer_id)->where('is_paid', 0)->orderBy('id','asc')->get();
+
             $sum_inv_amount = 0;
             foreach($invoice as $inv){
                 $invoice_date = date('Y-m-d', strtotime($inv->created_at));
@@ -187,7 +189,7 @@ class AccountingRepository implements AccountingRepositoryInterface
 
                 $amount = $inv->required_payment_amount;
                 $sum_inv_amount += $amount;
-                
+
                 if($amount == $payment_amount){
                     Invoice::where('id',$inv->id)->update([
                         'required_payment_amount'=>0,
@@ -228,10 +230,14 @@ class AccountingRepository implements AccountingRepositoryInterface
                             'payment_status' => 2,
                             'is_paid'=>1
                         ]);
+
+                        $inv->refresh();
                         
+                       if ($inv->payment_status == 2) {
+                            app(\App\Services\LoyaltyService::class)
+                                ->processInvoice($inv);
+                        }
                         
-                        
-                       
                         
                         InvoicePayment::insert([
                             'invoice_id' => $inv->id,
@@ -274,6 +280,7 @@ class AccountingRepository implements AccountingRepositoryInterface
                 }
             }
         }else{
+            dd('else');
             $invoice_payment = InvoicePayment::where('voucher_no', $voucher_no)->first();
 
             $payment_amount = (float) $payment_amount;

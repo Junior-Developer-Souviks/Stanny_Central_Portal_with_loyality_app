@@ -13,8 +13,15 @@ class LoyaltyService
     public function processInvoice($invoice)
     {
         $user = User::find($invoice->customer_id);
-        
+
         if (!$user) return;
+
+        // =========================
+        // ONLY USERS WITH QR CODE
+        // =========================
+        if (empty($user->qr_code)) {
+            return; // Skip users without QR code
+        }
 
         // =========================
         // STEP 1: FULL PAYMENT CHECK
@@ -58,7 +65,7 @@ class LoyaltyService
         // =========================
         if ($rule->reward_type == 'lounge') {
             $user->increment('lounge_visits_total', $rule->lounge_visits);
-            
+
             WalletTransaction::create([
                 'user_id' => $user->id,
                 'type' => 'credit',
@@ -80,13 +87,13 @@ class LoyaltyService
             $points = ($rule->points_type == 'percentage')
                 ? ($amount * $rule->points_value) / 100
                 : $rule->points_value;
-
+                
             WalletTransaction::create([
                 'user_id' => $user->id,
                 'type' => 'credit',
                 'points' => $points,
                 'source' => 'Full_payment',
-                'channel' => 'purchase',
+                'channel' => 'points',
                 'reference_id' => $invoice->id
             ]);
 

@@ -36,6 +36,8 @@ class RedemptionController extends Controller
 
                 'card_number' => $customer->card_number,
 
+                'pin_number'  => $customer->pin,
+                
                 'total_points' => $customer->total_points,
 
                 'lounge_visits' =>

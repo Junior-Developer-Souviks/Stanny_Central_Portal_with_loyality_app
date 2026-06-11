@@ -42,45 +42,45 @@ class AuthController extends Controller
 
 {
 
-     public function getPrefixes()
+    //  public function getPrefixes()
 
-    {
+    // {
 
-        return response()->json([
+    //     return response()->json([
 
-            'status' => true,
+    //         'status' => true,
 
-            'message' => 'Prefixes fetched successfully',
+    //         'message' => 'Prefixes fetched successfully',
 
-            'data' => Helper::getNamePrefixes()// your helper function
+    //         'data' => Helper::getNamePrefixes()// your helper function
 
-        ]);
+    //     ]);
 
-    }
+    // }
 
     
 
-    public function country_code(){
+    // public function country_code(){
 
-        $countries = Country::where('status', 1)
+    //     $countries = Country::where('status', 1)
 
-            ->select('id', 'title', 'country_code', 'mobile_length')
+    //         ->select('id', 'title', 'country_code', 'mobile_length')
 
-            ->orderBy('title')
+    //         ->orderBy('title')
 
-            ->get();
+    //         ->get();
 
 
 
-        return response()->json([
+    //     return response()->json([
 
-            'success' => true,
+    //         'success' => true,
 
-            'data'    => $countries,
+    //         'data'    => $countries,
 
-        ], 200);
+    //     ], 200);
 
-    }
+    // }
 
     
    
@@ -93,33 +93,17 @@ class AuthController extends Controller
     
         try {
     
-            // STEP 1: Get mobile length dynamically
-            $mobileLength = Country::where('country_code', $request->phone_code)
-                ->value('mobile_length');
-    
-            if (!$mobileLength) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Invalid country code'
-                ], 422);
-            }
-    
-            // STEP 2: Validate request
+            // STEP 1: Validate request
             $validated = $request->validate([
-                'phone_code' => 'required|exists:countries,country_code',
                 'phone'      => [
                     'required',
                     'numeric',
-                    'digits:' . $mobileLength,
                     'unique:users,phone'
                 ],
-            ], [
-                'phone.digits' => "Phone number must be {$mobileLength} digits"
             ]);
     
             // STEP 3: Check existing user
             $existingUser = User::where('phone', $validated['phone'])
-                ->where('country_code_phone', $validated['phone_code'])
                 ->first();
     
             if ($existingUser) {
@@ -136,7 +120,6 @@ class AuthController extends Controller
             // STEP 5: Create User
             $user = User::create([
                 'phone'               => $validated['phone'],
-                'country_code_phone'  => $validated['phone_code'],
                 'type'                => 1,
                 'qr_code'             => Str::uuid(),
                 'card_number'         => 'CARD' . time() . rand(10, 99),
@@ -188,23 +171,13 @@ class AuthController extends Controller
 
      public function login(Request $request)
     {
-        $mobileLength = Country::where('country_code', $request->phone_code)
-            ->value('mobile_length');
-    
-        if (!$mobileLength) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid country code'
-            ], 422);
-        }
+       
     
         $validated = $request->validate([
-            'phone_code' => 'required|exists:countries,country_code',
-            'phone' => ['required', 'numeric', 'digits:' . $mobileLength],
+            'phone' => ['required', 'numeric'],
         ]);
     
         $user = User::where('phone', $validated['phone'])
-            ->where('country_code_phone', $validated['phone_code'])
             ->where('user_type', 1)
             ->first();
     
@@ -240,7 +213,7 @@ class AuthController extends Controller
         $user = User::where('phone', $validated['phone'])
             ->where('otp', $validated['otp'])
             ->first();
-    
+
         if (!$user) {
             return response()->json([
                 'status' => false,
@@ -270,8 +243,9 @@ class AuthController extends Controller
     
     public function updateProfile(Request $request)
     {
-        $user = auth()->user();
-    
+       
+        $user = auth('api')->user();
+
         $validated = $request->validate([
             'prefix' => 'required|string',
             'name' => 'required|string|max:255',

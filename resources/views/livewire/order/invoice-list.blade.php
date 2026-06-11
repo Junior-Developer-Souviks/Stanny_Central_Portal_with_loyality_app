@@ -111,11 +111,15 @@
                             <x-table-td>{{"INV/2025/".$item->invoice_no}} </x-table-td>
                             <x-table-td>
                                 <a href="{{ route('admin.order.view', $item->order_id) }}"
-                                    class="btn btn-outline-secondary select-md btn_outline">{{$item->order ? $item->order->order_number : ""}}</a>
+                                    class="btn btn-outline-secondary select-md btn_outline">{{$item->order ? env('ORDER_PREFIX').$item->order->order_number : ""}}</a>
                             </x-table-td>
                             <x-table-td>
                                 <p class="small text-muted mb-1">
-                                    <span><strong>{{ucwords($item->customer?$item->customer->name:"")}}</strong> </span>
+                                    <span>
+                                        <strong>
+                                            {{ ucwords(optional($item->customer)->prefix.' '.optional($item->customer)->name) }}
+                                        </strong>
+                                    </span>
                                 </p>
                             </x-table-td>
                             <x-table-td>
