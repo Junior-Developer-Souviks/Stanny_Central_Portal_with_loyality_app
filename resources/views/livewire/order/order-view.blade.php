@@ -103,7 +103,7 @@
 
                     <div class="col-sm-6">
                         <div class="form-group mb-3">
-                            
+                           
                             @php
                                 $hasDelivered = false;
                                 foreach ($orderItems as $item) {
@@ -346,18 +346,19 @@
                                             <table class="table table-sm ledger">
                                                 <thead>
                                                     <tr>
-                                                        
+                                                      
                                                         <th rowspan="1" colspan="1" aria-label="products">Delivery
                                                             Date</th>
-                                                        
+                                                       
                                                         <th rowspan="1" colspan="1" aria-label="products">
                                                             Status</th>
-
+    
                                                         <th rowspan="1" colspan="1" aria-label="products">Delivered BY
                                                             ({{ isset($item['deliveries'][0]['delivered_by']) &&
                                                             $item['deliveries'][0]['delivered_by'] != 1 ? 'Production' :
                                                             'Admin' }})
-                                                        </th>
+                                                        </th> 
+                                                       
                                                         <th class="" rowspan="1" colspan="1" aria-label="qty">
                                                             qty</th>
                                                         <th rowspan="1" colspan="1" aria-label="products">
@@ -431,7 +432,7 @@
 
                                                     </tr>
                                                     @endif
-                                                   
+                                                    
                                                 </tbody>
                                             </table>
 
@@ -451,7 +452,6 @@
                                                 <h6 class="badge bg-danger custom_success_badge">Measurements</h6>
                                                 <div class="row">
 
-                                                  
                                                     @foreach ($item['measurements'] as $m)
                                                     <div class="col-md-3 mb-2">
                                                         <label>
@@ -462,22 +462,22 @@
                                                         <input type="text"
                                                             class="form-control form-control-sm border border-1 text-center"
                                                             readonly value="{{ $m['measurement_value'] }}">
-                                                            @if(!empty($m['measurement_remarks']))
-                                                                <textarea class="form-control form-control-sm bg-white text-muted mt-2" 
-                                                                          rows="2" 
-                                                                          readonly 
-                                                                          style="resize: none; font-size: 0.8rem;">{{ $m['measurement_remarks'] }}</textarea>
-                                                            @endif
+                                                            
+                                                        @if(!empty($m['measurement_remarks']))
+                                                            <textarea class="form-control form-control-sm bg-white text-muted mt-2" 
+                                                                      rows="2" 
+                                                                      readonly 
+                                                                      style="resize: none; font-size: 0.8rem;">{{ $m['measurement_remarks'] }}</textarea>
+                                                        @endif
                                                     </div>
                                                     @endforeach
                                                 </div>
 
 
-                                                @if(!empty($item['remarks']))
+                                               @if(!empty($item['remarks']))
                                                 <div class="mt-3">
                                                     <label for="remarks"><strong>Remarks:</strong></label>
                                                     <textarea class="form-control form-control-sm border border-1"
-                                                        style="resize:none; overflow:hidden; field-sizing: content; min-height: 80px;"
                                                         rows="3" disabled>{{$item['remarks']}}</textarea>
                                                 </div>
                                                 @endif
@@ -498,16 +498,9 @@
                                                 <p>
                                                     Expected Delivery Month :
                                                     <strong>
-                                                        @php
-                                                            try {
-                                                                $date = !empty($item['expected_delivery_date']) 
-                                                                    ? \Carbon\Carbon::parse($item['expected_delivery_date'])->format('F, Y') 
-                                                                    : 'N/A';
-                                                            } catch (\Exception $e) {
-                                                                $date = 'Invalid Date';
-                                                            }
-                                                        @endphp
-                                                        {{ $date }}
+                                                        {{ !empty($item['expected_delivery_date']) 
+                                                            ? \Carbon\Carbon::createFromFormat('Y-m', $item['expected_delivery_date'])->format('F, Y') 
+                                                            : 'N/A' }}
                                                     </strong>
                                                 </p>
                                                 <p>Fittings : <strong>{{$item['fittings'] ?? 'N/A'}}</strong></p>
@@ -544,7 +537,7 @@
                                           
                                             <div class="col-lg-3">
                                               @if(in_array('mens_jacket_suit', $item['extra_type'] ?? []))
-                                              <p><strong>Hand Stitching:</strong> {{ $item['mens_hand_stitching'] ?? 'N/A'
+                                               <p><strong>Hand Stitching:</strong> {{ $item['mens_hand_stitching'] ?? 'N/A'
                                                     }}</p>
                                                 <p><strong>Shoulder Type:</strong> {{ $item['shoulder_type'] ?? 'N/A' }}
                                                 </p>
@@ -572,7 +565,7 @@
                                                
                                                 <p><strong>Back Pocket Required:</strong> {{
                                                     $item['back_pocket_required'] ?? 'N/A' }}</p>
-                                              
+                                                
                                                 <p><strong>Adjustable Belt:</strong> {{ $item['adjustable_belt'] ??
                                                     'N/A' }}</p>
                                                 <p><strong>Suspender Button:</strong> {{ $item['suspender_button'] ??

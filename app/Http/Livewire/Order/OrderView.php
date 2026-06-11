@@ -24,6 +24,7 @@ class OrderView extends Component
         'status' => 'required',
         'remarks' => 'required|string|min:3',
     ];
+    
     public function mount($id){
         $this->orderId = $id;
         $this->order = Order::with(['items','files'])->findOrFail($this->orderId);
@@ -45,7 +46,7 @@ class OrderView extends Component
     public function render()
     {
          // Fetch the order and its related items
-        $order = Order::with([
+         $order = Order::with([
             'items.catalogue',
             'items.deliveries' => function ($q) {
                 $q->with('user:id,name');
@@ -96,7 +97,7 @@ class OrderView extends Component
                     'delivered_quantity' => $delivery->delivered_quantity,
                     'user' => $delivery->user ? ['name' => $delivery->user->name] : ['name' => 'N/A'],
                     'collection_id' => $item->collection,
-                ] : null,
+                ] : [],
                 'quantity' => $item->quantity,
                 'remarks' => $item->remarks,
                 'catlogue_images' => $item->catlogue_image,
@@ -127,6 +128,7 @@ class OrderView extends Component
                 'client_name_required'     => $item->client_name_required,   
                 'client_name_place'     => $item->client_name_place,   
                 'client_name_options'     => $item->client_name_options,   
+
             ];
         });
 
@@ -210,16 +212,16 @@ class OrderView extends Component
     
    public function generatePdf($id)
    {
-        $order = Order::with([
-            'customer' => function ($q) {
-                $q->select('id', 'country_code_phone', 'phone', 'employee_rank','company_name');
-            },
-            'items.deliveries' => function ($q) {
-                $q->with('user:id,name');
-            },
-            'items.voice_remark',
-            'items.catlogue_image',
-        ])->findOrFail($id);
+      $order = Order::with([
+        'customer' => function ($q) {
+            $q->select('id', 'country_code_phone', 'phone', 'employee_rank','company_name');
+        },
+        'items.deliveries' => function ($q) {
+            $q->with('user:id,name');
+        },
+        'items.voice_remark',
+        'items.catlogue_image',
+    ])->findOrFail($id);
 
     // ─────────────────────────────────────────────
     // PREVIOUS ORDER
@@ -341,7 +343,7 @@ class OrderView extends Component
                 $order->created_at
             )->format('d.m.Y'),
 
-            'delivery_date' => (function() use ($item,$delivered_qty) {
+           'delivery_date' => (function() use ($item,$delivered_qty) {
                 $delivery = $item->deliveries->where('status', 'Delivered')->last();
                 if ($delivered_qty > 0 && $delivery && $delivery->updated_at) {
                     return Carbon::parse($delivery->updated_at)->format('d.m.Y');
@@ -384,7 +386,7 @@ class OrderView extends Component
 
     $paymentRows = [];
 
-    $payments = InvoicePayment::whereHas(
+   $payments = InvoicePayment::whereHas(
         'invoice',
         function ($q) use ($order) {
             $q->where('order_id', $order->id);
@@ -434,7 +436,7 @@ class OrderView extends Component
     // ═════════════════════════════════════════════
     // VIEW DATA
     // ═════════════════════════════════════════════
-    // dd($order->customer->company_name);
+
     $data = [
 
         // HEADER

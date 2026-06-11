@@ -119,9 +119,14 @@
                             </td>
                             @php
                                 // Check if there are any items assigned to production and not yet received
-                                 
+                                  //      $hasPendingProductionItems = $order->items()
+                                  //  ->where('assigned_team', 'production')
+                                     //->where(function($q) {
+                                    //        $q->whereNotNull('received_at');
+                                    //    })
+                                  //  ->exists(); --}}
                                     $hasPendingProductionItems = false;
-                                    
+
                                    if (in_array($order->status, ['Partial Approved By Admin', 'Fully Approved By Admin'])) {
 
                                         $hasPendingProductionItems = $order->items()

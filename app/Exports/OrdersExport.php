@@ -15,8 +15,7 @@ class OrdersExport implements FromQuery, WithHeadings, WithMapping
     use Exportable;
 
     public $customer_id, $created_by, $start_date, $end_date, $search;
-    private $serial = 1;
-    
+
     public function __construct($customer_id = null, $created_by = null, $start_date = null, $end_date = null, $search = null)
     {
         $this->customer_id = $customer_id;
@@ -29,7 +28,7 @@ class OrdersExport implements FromQuery, WithHeadings, WithMapping
     public function query()
     {
         return Order::query()
-            ->with('createdBy.branch', 'businessType', 'customer')
+            ->with('createdBy', 'businessType', 'customer')
             ->when($this->search, function ($query) {
                 $query->where('order_number', 'like', '%' . $this->search . '%')
                     ->orWhere('customer_name', 'like', '%' . $this->search . '%')
@@ -53,29 +52,32 @@ class OrdersExport implements FromQuery, WithHeadings, WithMapping
     public function headings(): array
     {
         return [
-            'Sl.No','Order Date', 'Customer Name', 'Created By', 'Branch Name','Order Number', 
-            'Customer Email', 'Billing Address', 
+            'ID','Order Date', 'Business Type', 'Customer Name', 'Created By', 'Order Number', 
+            'Customer Email', 'Billing Address', 'Shipping Address', 
             'Total Amount', 'Paid Amount', 'Remaining Amount', 
-            'Last Payment Date','status'
+            'Last Payment Date', 'Payment Mode', 'Status'
         ];
     }
 
     public function map($order): array
     {
         return [
-            $this->serial++,
+            $order->id,
             $order->created_at ? Carbon::parse($order->created_at)->format('Y-m-d') : 'N/A',
+            $order->business_type ?? 'N/A',
             $order->customer->name ?? 'N/A',
             $order->createdBy->name ?? 'N/A', // Fetching the created_by user's name
-            $order->createdBy->branch->name ?? 'N/A', // Fetching the created_by user's name
             $order->order_number,
             $order->customer_email,
             $order->billing_address,
+            $order->shipping_address,
             number_format($order->total_amount, 2),
             number_format($order->paid_amount, 2),
-            number_format($order->total_amount - $order->paid_amount, 2),
+            number_format($order->remaining_amount, 2),
             $order->last_payment_date ? Carbon::parse($order->last_payment_date)->format('Y-m-d') : 'N/A',
-            $order->status, // Convert status to text
+            $order->payment_mode,
+            $order->status == 1 ? 'Active' : 'Inactive', // Convert status to text
+            // $order->created_at ? Carbon::parse($order->created_at)->format('Y-m-d H:i:s') : 'N/A',
         ];
     }
 }

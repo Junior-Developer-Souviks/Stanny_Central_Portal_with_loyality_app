@@ -281,7 +281,7 @@ class SalesmanBillingIndex extends Component
         ->when($this->search, function ($query) {
             $query->whereHas('salesman', function ($subQuery) {
                 $subQuery->where('name', 'like', '%' . $this->search . '%')
-                           ->orWhere('email', 'like', '%' . $this->search . '%');
+                         ->orWhere('email', 'like', '%' . $this->search . '%');
             });
         })
         ->orderBy('id', 'DESC')

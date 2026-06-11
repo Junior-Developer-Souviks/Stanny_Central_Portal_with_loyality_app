@@ -1,3 +1,7 @@
+{{--<div wire:click="destroy" style="cursor:pointer;">
+    <span class="d-sm-inline d-none">Sign Out</span>
+</div> --}}
+
 <form method="POST" action="{{ route('admin.logout') }}" id="logout-form">
     @csrf
     <button type="submit"

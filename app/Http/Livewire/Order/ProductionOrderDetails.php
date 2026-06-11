@@ -191,7 +191,7 @@ public function updateStock($itemId)
         }
 
         DB::commit();
-        $this->dispatch('stock-updated-successfully', message: 'Stock updated successfully!');
+        $this->dispatch('stock-updated-successfully', [message=> 'Stock updated successfully!']);
         $this->loadOrderItems();
         $this->openStockModal($orderItemId);
         return redirect()->route('production.order.details', $this->orderId);
@@ -199,7 +199,8 @@ public function updateStock($itemId)
     } catch (\Throwable $e) {
         DB::rollBack();
         report($e);
-        $this->dispatch('error', message: 'Error updating stock: ' . $e->getMessage());
+       $this->dispatch('error', ['message' => 'Error updating stock: ' . $e->getMessage()]);
+        
     }
 }
 
@@ -298,6 +299,7 @@ public function revertBackStock($itemId, $inputName, $entryId)
            $logTooltip = $logs->map(function ($log) use ($item, &$deliveryCount,$latestDeliveryLog) {
             $details = json_decode($log->data_details, true);
             // Find the latest delivery_proceed log (if any)
+            
             return match ($log->purpose) {
                 // For product-based collections (collection_id = 2)
                 'stock_entry_update' => $item->collection == 2
@@ -331,6 +333,7 @@ public function revertBackStock($itemId, $inputName, $entryId)
 
                 default => null,
             };
+            
         })->filter()->implode(' | ');
 
 
@@ -428,8 +431,9 @@ public function revertBackStock($itemId, $inputName, $entryId)
                 'suspender_button'     => $item->suspender_button,
                 'trouser_position'     => $item->trouser_position,   
                 'client_name_required'     => $item->client_name_required,   
-                'client_name_place'     => $item->client_name_place,  
+                'client_name_place'     => $item->client_name_place,
                 'client_name_options'     => $item->client_name_options,   
+
             ];
         });
 }

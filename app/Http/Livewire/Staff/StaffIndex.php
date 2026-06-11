@@ -64,9 +64,9 @@ class StaffIndex extends Component
     public function render()
     {
         $query = User::with(['branch','bank', 'address', 'designationDetails','teamLead'])
-            ->where('designation', '!=', 1)
-            ->where('user_type', 0)
-            ->orderBy('name', 'ASC');
+                ->where('designation', '!=', 1)
+                ->where('user_type', 0)
+                ->orderBy('name', 'ASC');
 
             $auth = Auth::guard('admin')->user();
 
@@ -86,7 +86,7 @@ class StaffIndex extends Component
                   ->orWhere('email', 'like', '%' . $this->search . '%')
                   ->orWhere('phone', 'like', '%' . $this->search . '%');
                   
-                     //  Search in branch name
+                  //  Search in branch name
                 $q->orWhereHas('branch', function ($branchQuery) {
                     $branchQuery->where('name', 'like', '%' . $this->search . '%');
                 });

@@ -30,25 +30,17 @@ class AccountingRepository implements AccountingRepositoryInterface
         $check_not_receipt_payment_amount =
         PaymentCollection::where('customer_id',$data['customer_id'])->where('is_ledger_added',0)->first();
 
-        /*if($request->amount > $check_outstanding_amount){
-
-        return redirect()->back()->withErrors(['amount' => 'Please decrease your amount value. Unpaid outstanding amount is
-        '.$check_outstanding_amount ])->withInput();
-
-        }*/
-
-
         $paymentData = array(
-        'payment_for' => 'credit',
-        'voucher_no' => $data['voucher_no'],
-        'payment_date' => $data['payment_date'],
-        'payment_mode' => $data['payment_mode'],
-        'payment_in' => ($data['payment_mode'] != 'cash') ? 'bank' : 'cash' ,
-        'bank_cash' => ($data['payment_mode'] == 'cash') ? 'cash' : 'bank',
-        'amount' => $data['amount'],
-        'chq_utr_no' => !empty($data['chq_utr_no'])?$data['chq_utr_no']:'',
-        'bank_name' => !empty($data['bank_name'])?$data['bank_name']:'',
-        'created_by' => Auth::guard('admin')->user()->id
+            'payment_for' => 'credit',
+            'voucher_no' => $data['voucher_no'],
+            'payment_date' => $data['payment_date'],
+            'payment_mode' => $data['payment_mode'],
+            'payment_in' => ($data['payment_mode'] != 'cash') ? 'bank' : 'cash' ,
+            'bank_cash' => ($data['payment_mode'] == 'cash') ? 'cash' : 'bank',
+            'amount' => $data['amount'],
+            'chq_utr_no' => !empty($data['chq_utr_no'])?$data['chq_utr_no']:'',
+            'bank_name' => !empty($data['bank_name'])?$data['bank_name']:'',
+            'created_by' => Auth::guard('admin')->user()->id
         );
 
         // Receipt for Customer
@@ -102,7 +94,6 @@ class AccountingRepository implements AccountingRepositoryInterface
         /* Payment Collection Entry */
 
         if(empty($data['payment_collection_id'])){
-
             $arrPaymentCollection = array(
             'customer_id' => $data['customer_id'],
             'user_id' => $data['staff_id'],
@@ -196,14 +187,21 @@ class AccountingRepository implements AccountingRepositoryInterface
 
                 $amount = $inv->required_payment_amount;
                 $sum_inv_amount += $amount;
-
+                
                 if($amount == $payment_amount){
-                    // die('Full Covered');
                     Invoice::where('id',$inv->id)->update([
                         'required_payment_amount'=>0,
                         'payment_status' => 2,
                         'is_paid'=>1
                     ]);
+                    
+                    $inv->refresh();
+
+                    
+                    if ($inv->payment_status == 2) {
+                            app(\App\Services\LoyaltyService::class)
+                                ->processInvoice($inv);
+                        }
 
                     InvoicePayment::insert([
                         'invoice_id' => $inv->id,
@@ -222,7 +220,6 @@ class AccountingRepository implements AccountingRepositoryInterface
 
                 } else{
 
-                    // die('Not Full Covered');
 
                     if($amount_after_settlement>$amount && $amount_after_settlement>0){
                         $amount_after_settlement=$amount_after_settlement-$amount;
@@ -231,6 +228,11 @@ class AccountingRepository implements AccountingRepositoryInterface
                             'payment_status' => 2,
                             'is_paid'=>1
                         ]);
+                        
+                        
+                        
+                       
+                        
                         InvoicePayment::insert([
                             'invoice_id' => $inv->id,
                             'payment_collection_id' => $payment_collection_id,
@@ -299,12 +301,13 @@ class AccountingRepository implements AccountingRepositoryInterface
                     $sum_inv_amount += $amount;
 
                     if($amount == $payment_amount){
-                        // die('Full Covered');
                         Invoice::where('id',$inv->id)->update([
                             'required_payment_amount'=>0,
                             'payment_status' => 2,
                             'is_paid'=>1
                         ]);
+                        
+                        
 
                         InvoicePayment::insert([
                             'invoice_id' => $inv->id,
@@ -323,7 +326,6 @@ class AccountingRepository implements AccountingRepositoryInterface
 
                     } else{
 
-                        // die('Not Full Covered');
 
                         if($amount_after_settlement>$amount && $amount_after_settlement>0){
                             $amount_after_settlement=$amount_after_settlement-$amount;
@@ -332,6 +334,8 @@ class AccountingRepository implements AccountingRepositoryInterface
                                 'payment_status' => 2,
                                 'is_paid'=>1
                             ]);
+                            
+                            
                             InvoicePayment::insert([
                                 'invoice_id' => $inv->id,
                                 'payment_collection_id' => $payment_collection_id,
@@ -412,6 +416,8 @@ class AccountingRepository implements AccountingRepositoryInterface
                             'payment_status' => 2,
                             'is_paid'=>1
                         ]);
+                        
+                       
 
                         InvoicePayment::insert([
                             'invoice_id' => $inv->id,
@@ -439,6 +445,9 @@ class AccountingRepository implements AccountingRepositoryInterface
                                 'payment_status' => 2,
                                 'is_paid'=>1
                             ]);
+                            
+                            
+                            
                             InvoicePayment::insert([
                                 'invoice_id' => $inv->id,
                                 'payment_collection_id' => $payment_collection_id,

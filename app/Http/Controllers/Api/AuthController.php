@@ -385,6 +385,36 @@ class AuthController extends Controller
         ], 200);
     }
 
+//   public function logout(Request $request)
+//         {
+//         // $validator = Validator::make($request->all(), [
+//         //     'user_id' => 'required|exists:users,id',
+//         // ]);
+         
+//         // if ($validator->fails()) {
+//         //     return response()->json([
+//         //     'status' => false,
+//         //     'message' => $validator->errors()->first(),
+//         //     ], 422);
+//         // }
+         
+//         $user = $request->user();
+       
+         
+//         // Remove device ID to require OTP on next login
+//         $userLogin->device_id = null;
+        
+//         // $userLogin->mpin = null; // Optional: Remove MPIN if required
+//         $userLogin->save();
+         
+//         // Delete API tokens if the user is authenticated
+//         if (Auth::check()) {
+//           Auth::user()->tokens()->delete(); // Logs out by deleting all tokens
+//         }
+//         return response()->json([
+//         'message' => 'Logout successfull.'
+//         ], 200);
+//         }
         
         public function logout(Request $request)
         {
@@ -748,7 +778,56 @@ class AuthController extends Controller
     ], 200);
 }
 
-  
+    // public function customer_filter(Request $request)
+    // {
+    //     $user = $this->getAuthenticatedUser();
+    //     if ($user instanceof \Illuminate\Http\JsonResponse) {
+    //         return $user; // Return the response if the user is not authenticated
+    //     }
+    //     $filter = $request->keyword;
+        
+    //     // Fetch filtered users
+    //     $users = User::with('billingAddress')->where('user_type', 1)
+    //         ->where('status', 1)
+    //         ->when($filter, function ($query) use ($filter) {
+    //             $query->where(function ($q) use ($filter) {
+    //                 $q->where('name', 'like', "%{$filter}%")
+    //                 ->orWhere('phone', 'like', "%{$filter}%")
+    //                 ->orWhere('whatsapp_no', 'like', "%{$filter}%")
+    //                 ->orWhere('company_name', 'like', "%{$filter}%")
+    //                 ->orWhere('email', 'like', "%{$filter}%");
+    //             });
+    //         })
+    //         ->where('created_by', $user->id)
+    //         ->get();
+          
+    //         // Fetch orders and get the first matching customer's details
+    //         $order = Order::where('order_number', 'like', "%{$filter}%")
+    //             ->orWhereHas('customer', function ($query) use ($filter) {
+    //                 $query->where('name', 'like', "%{$filter}%");
+    //             })
+    //             ->where('created_by', $user->id)
+    //             ->latest()
+    //             ->first(); // Fetch only the first order directly
+            
+    //         if ($order && $order->customer) {
+    //             $users->prepend($order->customer);
+    //         }
+            
+    //         // $data = $users->map(function ($user) {
+    //         //     return [
+    //         //         'id' => $user->id,
+    //         //         'name' => $user->name,
+    //         //         'email' => $user->email,
+    //         //         'phone' => $user->phone,
+    //         //     ];
+    //         // });
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'Data fetched successfully!',
+    //         'data' => $users,
+    //     ],200);
+    // }
     public function customer_store(Request $request){
         $authUser = $this->getAuthenticatedUser();
         $phone_code_length = $request->phone_code_length;
@@ -813,7 +892,9 @@ class AuthController extends Controller
             $profileImagePath = $request->hasFile('profile_image')
                 ? 'storage/' . $request->file('profile_image')->store('profile_images', 'public')
                 : null;
-           
+            // $verifiedVideoPath = $request->hasFile('verified_video')
+            //     ? 'storage/' . $request->file('verified_video')->store('verified_videos', 'public')
+            //     : null;
             // Create the user
             $user = User::create([
                 'prefix' => $request->prefix,

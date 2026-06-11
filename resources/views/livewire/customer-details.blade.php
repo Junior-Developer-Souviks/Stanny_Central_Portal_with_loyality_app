@@ -43,7 +43,7 @@
 
                                 <div class="pofile-details">
                                     <h6 class="text-nowrap mb-0 meduim-heading">{{$customer->name}}</h6>
-                                    {{-- <h6 class="text-nowrap mb-0 meduim-heading">{{$customer->ordersAsCustomer->count()}} Orders</h6> --}}
+                                    
                                 </div>
                             </div>
                         </div>
@@ -53,6 +53,32 @@
                                 <h6 class="mb-1">Contact info</h6>
                             </div>
                         </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-4">
+                                <p class="small m-0"><strong>Total Points :</strong></p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p class="small m-0">{{$customer->total_points}}</p>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-4">
+                                <p class="small m-0"><strong>Card Number :</strong></p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p class="small m-0">{{$customer->card_number}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p class="small m-0"><strong>Qr Code :</strong></p>
+                            </div>
+                            <div class="col-sm-8">
+                                 <div id="qrcode"></div>
+                            </div>
+                        </div>
+                       
+
                         <div class="row">
                             <div class="col-sm-4">
                                 <p class="small m-0"><strong>Email :</strong></p>
@@ -263,4 +289,15 @@
             {{-- </div> --}}
         </div>
     </div>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        new QRCode(document.getElementById("qrcode"), {
+            text: "{{ $customer->qr_code }}",
+            width: 100,
+            height: 100
+        });
+    </script>
 </div>

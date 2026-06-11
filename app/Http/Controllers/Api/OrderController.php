@@ -25,7 +25,11 @@ class OrderController extends Controller
 {
     protected $accountingRepository;
 
-   
+    // public function __construct(AccountingRepositoryInterface $accountingRepository,)
+    // {
+    //     $this->accountingRepository = $accountingRepository;
+    // }
+
     protected function getAuthenticatedUser()
     {
         $user = Auth::guard('sanctum')->user();
@@ -92,7 +96,7 @@ class OrderController extends Controller
 
     }
     
- 
+   
     
     public function detail(Request $request)
     {
@@ -322,12 +326,55 @@ class OrderController extends Controller
             $customerName  = $validated['name'] ?? null;
             $customerPhone = $validated['phone'] ?? null;
 
-            $customer = User::create([
-                'name'  => $customerName,
-                'phone' => $customerPhone,
-            ]);
+            // $customer = User::create([
+            //     'name'  => $customerName,
+            //     'phone' => $customerPhone,
+            // ]);
 
+            // $customerId = $customer->id;
+            
+
+            // Generate PIN
+            $plainPin = rand(10000, 99999);
+            
+            // Welcome bonus
+            $welcomeBonus = config('loyalty.welcome_bonus', 0);
+            
+            // CREATE CUSTOMER
+            $customer = User::create([
+                'name'                 => $customerName,
+                'phone'                => $customerPhone,
+                'user_type'                 => 1,
+            
+                // UNIQUE QR
+                'qr_code'              => Str::uuid(),
+            
+                // UNIQUE CARD NUMBER
+                'card_number'          => 'CARD' . time() . rand(10, 99),
+            
+                // PIN
+                'pin'                  => $plainPin,
+            
+                // BONUS
+                'total_points'         => $welcomeBonus,
+            ]);
+            
             $customerId = $customer->id;
+            
+            
+            // WELCOME BONUS ENTRY
+            if ($welcomeBonus > 0) {
+            
+                $expiryDays = config('loyalty.point_expiry_days', 365);
+            
+                WalletTransaction::create([
+                    'user_id'     => $customer->id,
+                    'type'        => 'credit',
+                    'points'      => $welcomeBonus,
+                    'source'      => 'bonus',
+                    'expiry_date' => now()->addDays($expiryDays),
+                ]);
+            }
         }
 
         // BILL GENERATION
@@ -412,7 +459,6 @@ class OrderController extends Controller
 
             $payment_id = Payment::insertGetId([
                 'customer_id'  => $customerId,
-                'order_id'     => $order->id,
                 'payment_for'  => 'credit',
                 'voucher_no'   => $voucherNo,
                 'payment_date' => now()->toDateString(),
@@ -790,7 +836,156 @@ class OrderController extends Controller
         ]);
     }
 
-   
+     /**
+     * Store Payment Collection API
+     */
+    // public function paymentReceiptSave(Request $request)
+    // {
+    //     // Base rules
+    //     $rules = [
+    //         'customer_id'       => 'required|exists:users,id',
+    //         'staff_id'          => 'required|exists:users,id',
+    //         'collection_amount' => 'required|numeric|min:0.01',
+    //         'payment_type'      => 'required|in:cash,cheque,digital_payment,neft',
+    //         'voucher_no'        => 'nullable|string',
+    //         'payment_date'      => 'required|date',
+    //         'next_payment_date' => 'nullable|date',
+    //         'deposit_date'      => 'nullable|date',
+    //         'payment_collection_id' => 'nullable|integer|exists:payment_collections,id',
+    //     ];
+
+    //     // add conditional rules
+    //     if ($request->payment_type === 'cheque') {
+    //         $rules['cheque_number'] = 'required|string|max:255';
+    //         // deposit_date may be required depending on business rules; include as needed
+    //         $rules['deposit_date'] = 'required|date';
+    //         $rules['cheque_file'] = 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120';
+    //     } elseif ($request->payment_type === 'digital_payment') {
+    //         $rules['transaction_no'] = 'required|string|max:255';
+    //         $rules['withdrawal_charge'] = 'required|numeric|min:0';
+    //     } elseif ($request->payment_type === 'neft') {
+    //         $rules['cheque_number'] = 'required|string|max:255';
+    //     }
+
+    //     // If updating an existing collection, avoid voucher duplicate rule on same record
+    //     if ($request->filled('payment_collection_id')) {
+    //         $rules['voucher_no'] .= ',voucher_no,' . $request->payment_collection_id . ',id';
+    //     } else {
+    //         $rules['voucher_no'] .= '|unique:payment_collections,voucher_no';
+    //     }
+
+    //     $validator = Validator::make($request->all(), $rules);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'errors' => $validator->errors(),
+    //         ], 422);
+    //     }
+
+    //     try {
+    //         DB::beginTransaction();
+    //         $customer = User::find($request->customer_id);
+    //         if(!$customer){
+    //             return response()->json([
+    //                 'status' => false,
+    //                 'message' => 'Customer not found in users table.'
+    //             ],422);
+    //         }
+    //         // Prepare data mapping exactly as repository expects
+    //         $data = [
+    //             'customer_id'           => $customer->id,
+    //             'staff_id'              => $request->staff_id,        
+    //             'amount'                => $request->collection_amount,
+    //             'payment_mode'          => $request->payment_type,    // repository expects 'payment_mode'
+    //             'voucher_no'            => 'PAYRECEIPT'.time(),
+    //             'payment_date'          => $request->payment_date,
+    //             'receipt_for'           => $request->input('receipt_for', 'Customer'), // default
+    //             'payment_collection_id' => $request->payment_collection_id ?? null,
+    //             'credit_date'           => $request->credit_date ?? null, // optional
+    //             'next_payment_date'     => $request->next_payment_date ?? null,
+    //             'deposit_date'          => $request->deposit_date ?? null,
+    //         ];
+    //         // dd($data);
+
+    //         // Payment-mode specific fields
+    //         if ($request->payment_type === 'cheque') {
+    //             $data['chq_utr_no'] = $request->cheque_number;
+    //             $data['bank_name']  = $request->bank_name ?? null;
+    //             // file upload
+    //             if ($request->hasFile('cheque_file')) {
+    //                 $ext = $request->file('cheque_file')->getClientOriginalExtension();
+    //                 $filename = Str::random(10) . '.' . $ext;
+    //                 $path = $request->file('cheque_file')->storeAs('uploads/cheque', $filename, 'public');
+    //                 $data['cheque_photo'] = 'storage/' . $path;
+    //             } elseif ($request->filled('cheque_photo')) {
+    //                 // accept pre-uploaded path if provided by client
+    //                 $data['cheque_photo'] = $request->cheque_photo;
+    //             }
+    //         } elseif ($request->payment_type === 'digital_payment') {
+    //             $data['transaction_no'] = $request->transaction_no;
+    //             $data['withdrawal_charge'] = $request->withdrawal_charge ?? 0;
+    //             $data['bank_name'] = $request->bank_name ?? null; 
+    //             $data['chq_utr_no'] = $request->cheque_number;
+    //         }
+    //         elseif ($request->payment_type === 'neft') {
+    //             $data['bank_name'] = $request->bank_name ?? null; 
+    //             $data['chq_utr_no'] = $request->cheque_number;
+    //         } else { // cash
+    //             // ensure bank fields are empty for cash (repository uses bank_name/chq_utr_no optionally)
+    //             $data['bank_name'] = null;
+    //             $data['chq_utr_no'] = null;
+    //             $data['transaction_no'] = null;
+    //             $data['withdrawal_charge'] = null;
+    //         }
+
+    //         // keep backward compatibility: repository sometimes uses 'payment_id' when updating â€” allow passing it
+    //         if ($request->filled('payment_id')) {
+    //             $data['payment_id'] = $request->payment_id;
+    //         }
+
+    //         // call repository (it will insert/update payment, ledger, journals & invoice payments)
+    //         $this->accountingRepository->StorePaymentReceipt($data);
+
+    //         // create todos if required (mirrors your Livewire logic)
+    //         $admin_id = Auth::guard('admin')->check() ? Auth::guard('admin')->id() : Auth::id();
+    //         if (!empty($data['next_payment_date'])) {
+    //             TodoList::create([
+    //                 'user_id' => $data['staff_id'],
+    //                 'customer_id' => $data['customer_id'],
+    //                 'created_by' => $admin_id,
+    //                 'todo_type' => 'Payment',
+    //                 'todo_date' => $data['next_payment_date'],
+    //                 'remark' => 'Next Payment Schedule on ' . $data['next_payment_date'],
+    //             ]);
+    //         }
+    //         if (!empty($data['deposit_date'])) {
+    //             TodoList::create([
+    //                 'user_id' => $data['staff_id'],
+    //                 'customer_id' => $data['customer_id'],
+    //                 'created_by' => $admin_id,
+    //                 'todo_type' => 'Cheque Deposit',
+    //                 'todo_date' => $data['deposit_date'],
+    //                 'remark' => 'Deposit Date ' . $data['deposit_date'],
+    //             ]);
+    //         }
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'Payment collection stored successfully.',
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Failed to store payment collection.',
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
    public function skipOrderBill(Request $request)
     {
         $validated = $request->validate([

@@ -53,7 +53,7 @@
                         <select wire:model="team_lead" id="team_lead" class="form-control form-control-sm border border-1 p-2">
                             <option value="" selected hidden>Select Team Lead</option>
                             @foreach ($teamLeads as $lead)
-                            <option value="{{ $lead->id }}">{{ ucwords($lead->name) }} {{ucwords($lead->surname)}}@if($lead->prof_name)({{ucwords($lead->prof_name)}})@endif</option>
+                              <option value="{{ $lead->id }}">{{ ucwords($lead->name) }} {{ucwords($lead->surname)}}@if($lead->prof_name)({{ucwords($lead->prof_name)}})@endif</option>
                             @endforeach
                         </select>
                         @error('team_lead')

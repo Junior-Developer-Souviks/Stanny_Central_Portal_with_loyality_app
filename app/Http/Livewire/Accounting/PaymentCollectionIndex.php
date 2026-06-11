@@ -38,9 +38,9 @@ class PaymentCollectionIndex extends Component
         $this->resetPage();
     }
     
-    public function mount(){
+     public function mount(){
         $this->auth = Auth::guard('admin')->user();
-        $isAuthorizedViewer = $this->auth->is_super_admin || ($this->auth->designation == 14);
+        $isAuthorizedViewer = $this->auth->is_super_admin || ($this->auth->designation == 17);
           // Check approve permission via Designation → designation_permissions → permissions
         $this->canApprove = $this->auth->is_super_admin || Designation::where('id', $this->auth->designation)
             ->whereHas('permissions', function($query) {
@@ -63,7 +63,7 @@ class PaymentCollectionIndex extends Component
         $customer_id = $this->selected_customer_id;
         $staff_id = $this->staff_id;
         // Determine if user can see all data
-        $isAuthorizedViewer = $this->auth->is_super_admin || ($this->auth->designation == 14);
+        $isAuthorizedViewer = $this->auth->is_super_admin || ($this->auth->designation == 17);
 
         // Query with conditions
          $query = PaymentCollection::with(['customer', 'user'])
@@ -83,6 +83,7 @@ class PaymentCollectionIndex extends Component
         $this->total = $query->count();
         return $query->paginate($paginate);
     }
+    
     public function resetForm(){
         $this->active_details = 0;
         $this->reset(['selected_customer','selected_customer_id', 'staff_id']);
@@ -108,7 +109,7 @@ class PaymentCollectionIndex extends Component
         $this->resetPage();
     }
 
-    public function customerDetails($id)
+   public function customerDetails($id)
     {
         $this->active_details = ($this->active_details == $id) ? '' : $id;
     }

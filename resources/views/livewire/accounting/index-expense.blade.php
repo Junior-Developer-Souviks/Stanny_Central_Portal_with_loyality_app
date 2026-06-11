@@ -3,14 +3,13 @@
     <!-- Navbar -->
     <!-- End Navbar -->
     <!-- <div class="container-fluid py-4"> -->
-    
+    <style>
+        /* Hide details by default */
+        .store_details_column {
+            display: none;
+        }
+    </style>
     <div class="container">
-        <style>
-            /* Hide details by default */
-            .store_details_column {
-                display: none;
-            }
-       </style>
         <section class="admin__title">
             <h5>Expenses List</h5>
         </section>
@@ -246,23 +245,22 @@
                 </div>
             </div>
         </div>
-        @push('js')
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script>
-                window.addEventListener('close-import-modal', event => {
-                    var importModal = document.getElementById('importModal');
-                    var modal = bootstrap.Modal.getInstance(importModal);
-                    modal.hide();
-                });
-                $(document).ready(function () {
-                    $(".store_details_row").click(function () {
-                        // Toggle visibility of the next .store_details_column row
-                        $(this).next("tr").find(".store_details_column").toggle();
-                    });
-                });
-            </script>
-    
-        @endpush
     </div>
+    @push('js')
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            window.addEventListener('close-import-modal', event => {
+                var importModal = document.getElementById('importModal');
+                var modal = bootstrap.Modal.getInstance(importModal);
+                modal.hide();
+            });
+            $(document).ready(function () {
+                $(".store_details_row").click(function () {
+                    // Toggle visibility of the next .store_details_column row
+                    $(this).next("tr").find(".store_details_column").toggle();
+                });
+            });
+        </script>
     
+   @endpush
     

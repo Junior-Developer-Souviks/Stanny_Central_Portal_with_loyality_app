@@ -109,7 +109,7 @@
                                     @forelse ($staff_data as $key=> $member)
                                     <tr>
                                         <td>
-                                            <p class="text-xs font-weight-bold mb-0">{{$member->branch ? $member->branch->name : ""}}</p>
+                                            <p class="text-xs font-weight-bold mb-0">{{ $member->branch ? $member->branch->name : ""}}</p>
                                         </td>
                                         <td>
                                             <p class="text-xs font-weight-bold mb-0">{{$member->prefix. "

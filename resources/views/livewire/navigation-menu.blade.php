@@ -489,7 +489,38 @@
                     </a>
                 </li>
             @endif
-
+            
+           
+           {{-- @if ($this->hasPermissionByParent('report_management')) --}}
+            {{-- Loyality management --}}
+            <li class="nav-item">
+                <a class="nav-link text-white {{ request()->is('admin/loyality-rule*') ? 'active bg-gradient-primary' : '' }}"
+                    href="#LoyalityManagementSubmenu" data-bs-toggle="collapse" aria-expanded="{{ request()->is('admin/loyality-rule*') ? 'true' : 'false' }}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                      <i class="material-icons opacity-10">redeem</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Loyality Management</span>
+                </a>
+            </li>
+            <ul id="LoyalityManagementSubmenu" class="collapse list-unstyled ms-4 {{ request()->is('admin/loyality-rule*') ? 'show' : '' }}">
+              {{--  @if ($this->hasPermission('staff_listing')) --}}
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/report/loyality-rule') ? 'active' : '' }}"
+                        href="{{ route('loyality-rule.loyality_rule') }}">
+                          Loyality Rule
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/loyality-rule/settings') ? 'active' : '' }}"
+                        href="{{ route('loyality-rule.settings') }}">
+                          Settings
+                        </a>
+                    </li>
+              {{--  @endif  --}}
+            </ul>
+          {{--  @endif  --}}
+            
+            
         </ul>
     </div>
     

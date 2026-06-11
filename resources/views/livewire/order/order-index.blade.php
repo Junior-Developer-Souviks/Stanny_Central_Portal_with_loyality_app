@@ -88,7 +88,7 @@
                             </div>
                             @endif
                         </div>
-                        <div class="col-auto mt-3">
+                        <div class="col-auto">
                                 <a href="{{route('admin.order.index')}}" 
                                 class="btn btn-outline-danger select-md">Clear</a>
                         </div>
@@ -99,7 +99,7 @@
                         @if (!$auth->is_super_admin && $auth->user_type == 0) 
                         <div class="col-auto">
                             <a href="javascript:void(0)" wire:click="openImportModal" 
-                                   class="btn btn-outline-success select-md">
+                                   class="btn btn-outline-success select-md mt-3">
                                     <i class="fas fa-file-csv me-1"></i>Import
                                 </a>
                         </div>

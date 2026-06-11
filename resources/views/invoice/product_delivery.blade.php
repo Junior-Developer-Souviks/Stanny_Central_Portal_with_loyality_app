@@ -277,7 +277,45 @@
             </tr>
             @endforeach
 
-           
+            <!--{{-- ── Grand Total ───────────────────────── --}}-->
+            <!--<tr>-->
+            <!--    <td colspan="4" class="summary-label">Grand Total</td>-->
+            <!--    <td class="deliv-sign" colspan="1"></td>-->
+            <!--    <td class="summary-amount" colspan="4">{{ $amount }}</td>-->
+            <!--</tr>-->
+
+            <!--{{-- ── Payment Rows ──────────────────────── --}}-->
+            <!--@foreach($paymentRows as $row)-->
+            <!--<tr>-->
+            <!--    <td colspan="4" class="summary-label">-->
+            <!--        Pay-->
+            <!--        @if(!empty($row['date']))-->
+            <!--            <span style="font-weight:normal;font-size:9px;">({{ $row['date'] }})</span>-->
+            <!--        @endif-->
+            <!--    </td>-->
+            <!--    <td class="deliv-sign"></td>-->
+            <!--    <td class="summary-amount" colspan="4">{{ $row['pay'] }}</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+            <!--    <td colspan="4" class="summary-label">Total Rest</td>-->
+            <!--    <td class="deliv-sign">{{ $row['signature'] ?? '' }}</td>-->
+            <!--    <td class="summary-amount" colspan="4">{{ $row['total_rest'] }}</td>-->
+            <!--</tr>-->
+            <!--@endforeach-->
+
+            <!--{{-- If no payments yet, show empty Pay / Total Rest rows --}}-->
+            <!--@if(empty($paymentRows))-->
+            <!--<tr>-->
+            <!--    <td colspan="4" class="summary-label">Pay</td>-->
+            <!--    <td class="deliv-sign"></td>-->
+            <!--    <td class="summary-amount"></td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+            <!--    <td colspan="4" class="summary-label">Total Rest</td>-->
+            <!--    <td class="deliv-sign"></td>-->
+            <!--    <td class="summary-amount" colspan="2">{{ $amount }}</td>-->
+            <!--</tr>-->
+            <!--@endif-->
             {{-- ── Grand Total ───────────────────────── --}}
             <tr>
                 <td colspan="4" class="summary-label">Grand Total</td>

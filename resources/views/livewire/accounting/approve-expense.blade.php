@@ -102,7 +102,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        
                         {{-- Narration --}}
                         <div class="row">
                             <div class="col-sm-6">
@@ -113,20 +113,20 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group mb-3">
-                                    <label class="d-block mb-2">Receipt Copy</label>
-                            
+                                     <label class="d-block mb-2">Receipt Copy</label>
                                     @if($payment->expense_proof)
                                         <a href="{{ asset($payment->expense_proof) }}" target="_blank">
                                             <img src="{{ asset($payment->expense_proof) }}"
                                                  alt="Expense Proof"
-                                                 class="img-fluid border"
-                                                 style="max-height:250px;">
+                                                 class="img-fluid"
+                                                 style="max-height: 200px;">
                                         </a>
                                     @else
                                         <p>No receipt uploaded</p>
                                     @endif
                                 </div>
                             </div>
+
                            
                         </div>
 

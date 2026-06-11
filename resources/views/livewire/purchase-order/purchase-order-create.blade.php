@@ -117,7 +117,7 @@
                                     <div class="col-md-1">
                                         @if($isFabricSelected[$index] ?? false)
                                             <label for="pcs_per_mtr_{{$index}}" class="form-label"> Meter </label>
-                                            <input type="number" wire:model="rows.{{$index}}.pcs_per_mtr"  step="any"  wire:keyup="updateRowAmount({{ $index }})" id="pcs_per_mtr_{{$index}}" class="form-control form-control-sm border border-1 p-2">
+                                            <input type="number" wire:model="rows.{{$index}}.pcs_per_mtr" step="any"  wire:keyup="updateRowAmount({{ $index }})" id="pcs_per_mtr_{{$index}}" class="form-control form-control-sm border border-1 p-2">
                                         @else
                                             <label for="pcs_per_qty_{{$index}}" class="form-label">Quantity </label>
                                             <input type="number" wire:model="rows.{{$index}}.pcs_per_qty"  wire:keyup="updateRowAmount({{ $index }})" id="pcs_per_qty_{{$index}}" class="form-control form-control-sm border border-1 p-2" >

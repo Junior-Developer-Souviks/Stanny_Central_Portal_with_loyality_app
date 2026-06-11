@@ -7,10 +7,15 @@ use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Country;
 use App\Models\UserWhatsapp;
+use App\Models\Wallet;
+use App\Models\WalletTransaction;
+use App\Models\Setting;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
+
 
 class UserAddressForm extends Component
 {
@@ -56,6 +61,7 @@ class UserAddressForm extends Component
                     $this->selectedCountryWhatsapp = $country->country_code;
                     $this->alt_phone_code_1 = $country->country_code;
                     $this->alt_phone_code_2 = $country->country_code;
+                    $this->mobileLengthPhone = $country->mobile_length;
                 }
             }
         }
@@ -92,7 +98,7 @@ class UserAddressForm extends Component
             'dob'=> 'nullable|date',
             'phone' => [
                 'required',
-                'regex:/^\d{'. $this->mobileLengthPhone .'}$/',
+                'regex:/^\d{' . ($this->mobileLengthPhone ?? 8) . '}$/',
                 Rule::unique('users', 'phone')->whereNull('deleted_at'),
             ],
            
@@ -224,9 +230,24 @@ class UserAddressForm extends Component
                 'created_by' => $auth->id
             ];
         
-            
-            $user = User::create($userData);
+            $userData['qr_code'] = (string) Str::uuid();
+            $userData['card_number'] = 'CARD' . time() . rand(10, 99);
+            $userData['total_points'] =  (int) Setting::where('key', 'welcome_bonus')->value('value');
 
+            $user = User::create($userData);
+            
+            $expiryDays = (int) Setting::where('key', 'point_expiry_days')->value('value');
+            
+            WalletTransaction::create([
+                'user_id' => $user->id,
+                'type' => 'credit',
+                'points' => $bonus,
+                'source' => 'admin_bonus',
+                'expiry_date' => now()->addDays($expiryDays)
+            ]);
+            
+            //end : Customer loyality code when customer created from admin panel
+            
             if($this->isWhatsappPhone){
                 $existingRecord = UserWhatsapp::where('whatsapp_number', $this->phone)
                                                     ->where('user_id', '!=', $user->id)

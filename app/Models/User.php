@@ -68,7 +68,16 @@ class User extends Authenticatable
         'alternative_phone_number_1',
         'country_code_alt_2',
         'alternative_phone_number_2',
-        'customer_badge'
+        'customer_badge',
+        'qr_code',
+        'card_number',
+        'pin',
+        'otp',
+        'is_verified',
+        'otp_verified_at',
+        'total_points',
+        'lounge_visits_total',
+        'lounge_visits_used'
     ];
 
     /**

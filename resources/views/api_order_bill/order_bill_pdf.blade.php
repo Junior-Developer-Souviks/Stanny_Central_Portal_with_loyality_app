@@ -176,7 +176,7 @@
                             </span>
                             <span style="display:block; padding-left:20px;">
                                 @if($order->billing_address)
-                                {{$order->billing_address}}
+                                  {{$order->billing_address}}
                                 @else
                                  N/A
                                 @endif

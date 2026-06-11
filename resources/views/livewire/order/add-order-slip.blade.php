@@ -517,8 +517,7 @@
                                                             <textarea class="form-control form-control-sm bg-white text-muted mt-2" 
                                                               rows="2" 
                                                               readonly 
-                                                              style="resize: none; font-size: 0.8rem;">{{ $data['remarks'] }}
-                                                            </textarea>
+                                                              style="resize: none; font-size: 0.8rem;">{{ $data['remarks'] }}</textarea>
                                                         @endif
                                                     </div>
                                                 @endforeach
@@ -541,7 +540,7 @@
                                         @endif
                                       
                                 </div>
-                            
+                               
                                 <div class="col-sm-3">
                                     <p><strong>Fabric:</strong> {{ $order_item['fabrics']->title ?? 'N/A' }}</p>
                                     <p><strong>Catalogue:</strong>

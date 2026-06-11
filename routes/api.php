@@ -104,5 +104,8 @@ Route::middleware('auth:sanctum', 'token.session')->group(function () {
         Route::get('/types', [ExpenseController::class, 'types']);
         Route::post('/add-expense', [ExpenseController::class, 'addExpense']);
     });
-   
+    // More routes related to products can be added here
+    // Route::get('/products', [ProductController::class, 'index']);
+    // Route::put('/products/{id}', [ProductController::class, 'update']);
+    // Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 });

@@ -5,7 +5,7 @@
         }
         .message-icon:hover {
             opacity: 1 !important;
-            color: #007bff; 
+            color: #007bff; /* Optional: adds a blue color on hover */
         }
 
         /* Fix for recording buttons */
@@ -1753,7 +1753,6 @@
                                                             onclick="document.getElementById('voice-upload-{{ $index }}').click()">
                                                             <i class="material-icons text-white"
                                                                 style="font-size: 15px;">mic</i>
-                                                           
                                                         </button>
     
                                                         <!-- OR separator -->
@@ -1764,18 +1763,20 @@
                                                             <button type="button" class="btn btn-cta btn-sm"
                                                                 onclick="startRecording({{ $index }});"
                                                                 id="startBtn_{{ $index }}">
-                                                                 <i class="material-icons text-white" style="font-size:20px;">
+                                                                <i class="material-icons text-white" style="font-size:20px;">
                                                                     play_arrow
                                                                 </i>
-                                                              
+                                                                <!--<i class="material-icons text-white"-->
+                                                                <!--    style="font-size: 15px;">record_voice_over</i>-->
                                                             </button>
                                                             <button type="button" class="btn btn-cta btn-sm"
                                                                 onclick="stopRecording({{ $index }});"
                                                                 id="stopBtn_{{ $index }}" disabled>
-                                                                <i class="material-icons text-white" style="font-size:20px;">
+                                                                 <i class="material-icons text-white" style="font-size:20px;">
                                                                     pause
                                                                 </i>
-                                                              
+                                                                <!--<i class="material-icons text-white"-->
+                                                                <!--    style="font-size: 15px;">stop_circle</i>-->
                                                             </button>
                                                             <div id="visualizer-container-{{ $index }}" style="display: none; min-width: 160px;">
                                                                 <small class="text-danger fw-bold d-block text-center mb-1">Recording...</small>

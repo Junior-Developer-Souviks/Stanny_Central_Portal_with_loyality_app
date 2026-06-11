@@ -25,7 +25,7 @@
                 <div class="d-flex align-items-center gap-2">
                     @php
                         $user = Auth::guard('admin')->user();
-                        $isAuthorized = $user && ($user->is_super_admin == 1 || in_array($user->designation, [1, 14]));
+                        $isAuthorized = $user && ($user->is_super_admin == 1 || in_array($user->designation, [1, 17]));
                     @endphp
                     @if ($isAuthorized)
                     <div class="mb-4">

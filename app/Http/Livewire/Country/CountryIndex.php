@@ -69,11 +69,12 @@ class CountryIndex extends Component
 
     public function render()
     {
-         $countries = Country::where(function ($query) {
+        $countries = Country::where(function ($query) {
             $query->where('title', 'like', '%' . $this->search . '%')
                   ->orWhere('country_code', 'like', '%' . $this->search . '%');
         })
         ->paginate(10);
+        
         return view('livewire.country.country-index',[
             'country'=> $countries
         ]);

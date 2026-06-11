@@ -502,7 +502,7 @@
                                                 @else
                                                     <img src="{{ $img->temporaryUrl() }}" width="80" class="img-thumbnail shadow-sm me-2">
                                                 @endif
-                                            @endforeach 
+                                            @endforeach
                                         @endif
                                     </div>
                                 </div>
@@ -1853,7 +1853,6 @@
                                                         @if($isDisabled) disabled @endif>
                                                         <i class="material-icons text-white"
                                                             style="font-size: 15px;">mic</i>
-                                                        
                                                     </button>
 
                                                     <!-- OR separator -->
@@ -1864,11 +1863,11 @@
                                                         <button type="button" class="btn btn-cta btn-sm"
                                                             onclick="startRecording({{ $index }});"
                                                             id="startBtn_{{ $index }}" @if($isDisabled) disabled @endif>
-                                                            <i class="material-icons text-white" style="font-size:20px;">
+                                                             <i class="material-icons text-white" style="font-size:20px;">
                                                                     play_arrow
                                                                 </i>
-                                                            {{-- <i class="material-icons text-white"
-                                                                style="font-size: 15px;">record_voice_over</i> --}}
+                                                            <!--<i class="material-icons text-white"-->
+                                                            <!--    style="font-size: 15px;">record_voice_over</i>-->
                                                         </button>
                                                         <button type="button" class="btn btn-cta btn-sm"
                                                             onclick="stopRecording({{ $index }});"
@@ -1876,8 +1875,8 @@
                                                             <i class="material-icons text-white" style="font-size:20px;">
                                                                     pause
                                                                 </i>
-                                                            {{-- <i class="material-icons text-white"
-                                                                style="font-size: 15px;">stop_circle</i> --}}
+                                                            <!--<i class="material-icons text-white"-->
+                                                            <!--    style="font-size: 15px;">stop_circle</i>-->
                                                         </button>
                                                         <!-- Recording Visualizer -->
                                                         <div id="visualizer-container-{{ $index }}" style="display: none; min-width: 160px;">

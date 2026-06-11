@@ -110,7 +110,28 @@ class CashBookController extends Controller
 
         $wallet = $openingBalance + ($totalCollections - $totalExpenses - $collectedFromStaff + $givenToStaff);
 
-      
+        // $paymentCollections = PaymentCollection::with(['customer', 'user'])
+        //     ->where('is_approve', 1)
+        //     ->where('user_id', $user->id)
+        //     ->where(function ($q) {
+        //         $q->where('payment_type', '!=', 'cheque')
+        //         ->orWhere(function ($sq) {
+        //             $sq->where('payment_type', 'cheque')
+        //                 ->whereNotNull('credit_date');
+        //         });
+        //     })
+        //     ->whereBetween('created_at', [$startDate, $endDate])
+        //     ->where('collection_amount', '>', 0)
+        //     ->orderByDesc('created_at')
+        //     ->get();
+
+        // $validPaymentIds = Journal::whereNotNull('payment_id')->pluck('payment_id');
+        // $paymentExpenses = Payment::where('payment_for', 'debit')
+        //     ->whereIn('id', $validPaymentIds)
+        //     ->where('stuff_id', $user->id)
+        //     ->whereBetween('created_at', [$startDate, $endDate])
+        //     ->orderByDesc('created_at')
+        //     ->get();
 
         return response()->json([
             'status' => true,

@@ -422,10 +422,10 @@
                                             </div>
                                             @endif
                                         </div>
-
+                                        
                                         <div class="col-md-3">
                                             <p>FABRIC : <strong>{{$item['fabrics']->title ?? 'N/A'}}</strong></p>
-                                             <p>CATALOGUE : <strong>{{
+                                            <p>CATALOGUE : <strong>{{
                                                     optional(optional($item['catalogue'])->catalogueTitle)->title
                                                     }}</strong> 
                                                     <br/>
@@ -526,7 +526,7 @@
                                             <p><strong>Client Name Place:</strong> {{ $item['client_name_place'] ??
                                                 'N/A' }}</p>
                                             <p><strong>Client Name Options:</strong> {{ $item['client_name_options'] ??
-                                                'N/A' }}</p>
+                                                'N/A' }}</p>    
                                             @endif
                                         </div>
                                     </div>

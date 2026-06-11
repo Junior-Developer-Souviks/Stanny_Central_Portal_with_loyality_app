@@ -26,7 +26,7 @@ class PaymentCollection extends Model
   {
       return $this->belongsTo(User::class, 'admin_id', 'id');
   }
-    public function payment()
+  public function payment()
     {
         return $this->belongsTo(Payment::class, 'payment_id', 'id');
     }

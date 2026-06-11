@@ -39,6 +39,7 @@ use App\Http\Livewire\Stock\{StockIndex,UserLedger,StockAdjustment};
 use App\Http\Livewire\Report\{UserLedgerReport};
 use App\Http\Livewire\BusinessType\BusinessTypeIndex;
 use App\Http\Livewire\Country\CountryIndex;
+use App\Http\Livewire\CustomerLoyality\{LoyalityRule,ManageSettings};
 use App\Http\Livewire\Accounting\{AddPaymentReceipt,PaymentCollectionIndex,AddOpeningBalance,ListOpeningBalance,IndexExpense,AddExpense,EditExpense,CashBookModule,DayCashEntry,ApproveExpense,ApprovePaymentReceipt};
 // purchase Order pdf
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -67,7 +68,23 @@ Route::get('/sign-in', function(){
 Route::get('forgot-password', ForgotPassword::class)->middleware('guest')->name('password.forgot');
 Route::get('reset-password/{id}', ResetPassword::class)->middleware('signed')->name('reset-password');
 
+// Route::get('sign-up', Register::class)->middleware('guest')->name('register');
+// Route::get('sign-in', Login::class)->middleware('guest')->name('login');
 
+// Route::get('user-profile', UserProfile::class)->middleware('auth')->name('user-profile');
+// Route::get('user-management', UserManagement::class)->middleware('auth')->name('user-management');
+
+// Route::group(['middleware' => 'auth'], function () {
+//     Route::get('dashboard', Dashboard::class)->name('dashboard');
+//     Route::get('billing', Billing::class)->name('billing');
+
+//     Route::get('tables', Tables::class)->name('tables');
+//     Route::get('notifications', Notifications::class)->name("notifications");
+//     Route::get('virtual-reality', VirtualReality::class)->name('virtual-reality');
+//     Route::get('static-sign-in', StaticSignIn::class)->name('static-sign-in');
+//     Route::get('static-sign-up', StaticSignUp::class)->name('static-sign-up');
+//     Route::get('rtl', RTL::class)->name('rtl');
+// });
 
 Route::get('login', AdminLogin::class)->middleware('guest')->name('admin.login');
 Route::post('/admin/logout', function () {
@@ -219,15 +236,19 @@ Route::group(['prefix' => 'admin','middleware' => 'admin'], function () {
 
     });
 
-Route::prefix('todo-list')->name('todo-list.')->group(function() {
-        // Route::get('/', DepotExpanse::class)->name('index');
+    Route::prefix('todo-list')->name('todo-list.')->group(function() {
         Route::get('/', Todo::class)->name('todo-list');
-
+    
     });
-    // Route::get('/measurements/add', MeasurementAdd::class)->name('measurements.add');
-    // Route::get('/measurements/edit/{id}', MeasurementEdit::class)->name('measurements.edit');
-    // Route::get('/measurements/details/{id}', MeasurementDetails::class)->name('measurements.details');
-
+    
+    Route::prefix('loyality-rule')->name('loyality-rule.')->group(function() {
+        Route::get('/', LoyalityRule::class)->name('loyality_rule')->middleware('check.permission');
+         Route::get('/settings', ManageSettings::class)->name('settings');
+    
+    });
+        
+        
+    
     Route::group(['prefix' => 'orders'], function () {
         Route::get('/list/{customer_id?}', OrderIndex::class)->name('admin.order.index')->middleware('check.permission');
         Route::get('/confirm/{id}', AddOrderSlip::class)->name('admin.order.add_order_slip')->middleware('check.permission');
@@ -257,5 +278,6 @@ Route::prefix('todo-list')->name('todo-list.')->group(function() {
 
     });
     
-       
+    
+   
 });

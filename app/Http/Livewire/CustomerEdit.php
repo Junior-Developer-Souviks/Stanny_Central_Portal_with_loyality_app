@@ -7,8 +7,12 @@ use App\Models\User;
 use App\Models\Country;
 use App\Models\UserAddress;
 use App\Models\UserWhatsapp;
+use App\Models\Wallet;
+use App\Models\WalletTransaction;
+use App\Models\Setting;
 use Livewire\WithFileUploads;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class CustomerEdit extends Component
 {
@@ -179,29 +183,24 @@ class CustomerEdit extends Component
 
     public function update()
     {
-        // dd($this->all());
-         // Prepare data for dd and avoid showing existing image/verified_video
+        
         $dataToLog = $this->all();
 
-        // Check if 'image' exists already and unset it from the log data
         if (isset($this->image) && !empty($this->image)) {
-            // Don't log image data if it already exists
             unset($dataToLog['image']);
         }
 
-        // Check if 'verified_video' exists already and unset it from the log data
         if (isset($this->verified_video) && !empty($this->verified_video)) {
-            // Don't log verified_video data if it already exists
             unset($dataToLog['verified_video']);
         }
 
-        // Log data without the image and verified_video if they exist
-        // dd($dataToLog);
         $this->validate();
       
         $user = User::find($this->id);
         $user->fill($this->prepareUserData());
-
+        
+       
+        
         if ($this->isWhatsappPhone) {
             $existingRecord = UserWhatsapp::where('whatsapp_number', $this->phone)
                                                     ->where('user_id', '!=', $user->id)
@@ -268,6 +267,11 @@ class CustomerEdit extends Component
         if ($this->gst_certificate_image && $this->gst_certificate_image instanceof \Illuminate\Http\UploadedFile) {
             $user->gst_certificate_image = $this->uploadGSTCertificate();
         }
+        
+   
+       
+       
+       
 
         $user->save();
 

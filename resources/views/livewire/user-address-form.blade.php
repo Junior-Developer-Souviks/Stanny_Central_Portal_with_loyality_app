@@ -407,8 +407,8 @@
             @this.call('CountryCodeSet', selector, code);
         });
 
-        @this.set(codeModel, selected_dial_code);
-        @this.call('CountryCodeSet', selector, selected_dial_code);
+        // @this.set(codeModel, selected_dial_code);
+        // @this.call('CountryCodeSet', selector, selected_dial_code);
     }
 
     // Already existing
