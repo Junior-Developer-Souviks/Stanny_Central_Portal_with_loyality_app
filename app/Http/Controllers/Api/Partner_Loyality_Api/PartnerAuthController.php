@@ -25,7 +25,6 @@ class PartnerAuthController extends Controller
         $user = User::where([
                 'phone' => $validated['phone'],
                 'user_type' => 0,
-                'designation' => 14,
             ])->first();
 
         

@@ -657,6 +657,7 @@ class OrderNew extends Component
             
         $draftData = [
             'customerType'          => $this->customerType,
+            'customer_id'           => $this->customer_id,
             'prefix'                => $this->prefix,
             'name'                  => $this->name,
             'company_name'          => $this->company_name,
@@ -1886,7 +1887,6 @@ protected function fillMatchingMeasurements($currentIndex, $sourceIndex)
 
 
             if ($user) {
-
                 $user->update([
                     'prefix' => $this->prefix,
                     'name' => $this->name,

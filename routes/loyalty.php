@@ -13,5 +13,5 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 
 Route::middleware('auth:sanctum', 'token.session')->group(function () {
          Route::post('/update-profile', [AuthController::class, 'updateProfile']);
-
+        Route::post('/save-fcm-token', [AuthController::class, 'saveFcmToken']);
 });

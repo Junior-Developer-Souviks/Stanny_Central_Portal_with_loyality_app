@@ -282,6 +282,25 @@ class AuthController extends Controller
         ]);
     }
 
+
+    public function saveFcmToken(Request $request)
+    {
+        $request->validate([
+            'fcm_token'   => 'required|string',
+            'device_type' => 'required|in:android,ios',
+        ]);
+
+        $request->user()->update([
+            'fcm_token'   => $request->fcm_token,
+            'device_type' => $request->device_type,
+        ]);
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Token saved successfully'
+        ]);
+    }
+
 }
 
 

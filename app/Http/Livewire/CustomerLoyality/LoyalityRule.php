@@ -93,16 +93,36 @@ class LoyalityRule extends Component
         $this->dispatch('closeModal');
     }
 
-    public function resetFields()
-    {
-        $this->reset([
-            'min_amount','max_amount',
-            'points_type','points_value','lounge_visits','points_expiry_days','lounge_expiry_days',
-            'rule_id','isEdit','effective_date'
-        ]);
+    // public function resetFields()
+    // {
+    //     $this->reset([
+    //         'min_amount','max_amount',
+    //         'points_type','points_value','lounge_visits','points_expiry_days','lounge_expiry_days',
+    //         'rule_id','isEdit','effective_date'
+    //     ]);
 
-        $this->reward_type = 'points';
-    }
+    //     $this->reward_type = 'points';
+    // }
+
+    public function resetFields()
+{
+    $this->reset([
+        'min_amount',
+        'max_amount',
+        'points_type',
+        'points_value',
+        'lounge_visits',
+        'points_expiry_days',
+        'lounge_expiry_days',
+        'rule_id',
+        'isEdit',
+        'effective_date'
+    ]);
+
+    $this->reward_type = 'points';
+
+    $this->resetValidation();
+}
 
     public function editRule($id)
     {

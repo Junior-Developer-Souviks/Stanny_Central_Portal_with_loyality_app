@@ -2,10 +2,11 @@
 
     <section class="admin__title mb-5">
         <h5>Loyality Rule</h5>
-    </section>
+    </section>w
 
     <div class="text-end mb-3">
-        <a href="#" class="btn btn-outline-success select-md"
+        <a href="#" class="btn btn-outline-success select-md" 
+           wire:click="resetFields"
            data-bs-toggle="modal" data-bs-target="#addRuleModal">
             Add Rule
         </a>

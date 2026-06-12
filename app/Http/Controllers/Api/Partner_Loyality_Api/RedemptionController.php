@@ -64,8 +64,7 @@ class RedemptionController extends Controller
             $quantity = $validated['quantity'] ?? 1;
     
             // STEP 2: Logged In Staff
-            $staff = auth()->user();
-    
+            $staff = auth('api')->user();
             /*
             DESIGNATION MAPPING
     
@@ -154,7 +153,8 @@ class RedemptionController extends Controller
                 $totalPointsBefore = $customer->total_points;
     
                 $deductPoints = round($quantity * $rule->ratio, 2);
-    
+                // dd($deductPoints);
+
                 if ($deductPoints <= 0) {
                     return response()->json([
                         'status' => false,
@@ -170,7 +170,7 @@ class RedemptionController extends Controller
                     'user_id'      => $customer->id,
                     'type'         => 'debit',
                     'points'       => $deductPoints,
-                    'source'       => 'redemption',
+                    'source'       => 'point_redemption',
                     'channel'      => $channel,
                     'reference_id' => $staff->id,
                     'created_at'   => now(),
@@ -201,7 +201,6 @@ class RedemptionController extends Controller
             */
     
             if ($redeemType == 'lounge') {
-    
                 $availableVisits =
                     $customer->lounge_visits_total
                     -

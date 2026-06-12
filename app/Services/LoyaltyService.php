@@ -52,10 +52,15 @@ class LoyaltyService
         // STEP 4: RULE MATCH
         // =========================
         $amount = $invoice->net_price;
+
+        $orderCreatedDate = Carbon::parse($order->created_at)->toDateString();  // ← order date
+
         
         $rule = LoyaltyRule::where('status', 1)
             ->where('min_amount', '<=', $amount)
             ->where('max_amount', '>=', $amount)
+            //  ->where('effective_date', '<=', $orderCreatedDate) 
+            // ->orderBy('effective_date', 'desc')   
             ->first();
 
         if (!$rule) return;
@@ -64,16 +69,35 @@ class LoyaltyService
         // STEP 5: LOUNGE
         // =========================
         if ($rule->reward_type == 'lounge') {
-            $user->increment('lounge_visits_total', $rule->lounge_visits);
+            $expiryDate = Carbon::now()
+                            ->addDays($rule->lounge_expiry_days)
+                            ->toDateString();
+
+            $loungeBefore = $user->lounge_visits_total;
+
+            $added = $rule->lounge_visits;
+
+            $loungeAfter = $loungeBefore + $added;
+
+            $user->increment('lounge_visits_total', $added);
 
             WalletTransaction::create([
                 'user_id' => $user->id,
                 'type' => 'credit',
                 'points' => 0,
-                'lounge_visits' => $rule->lounge_visits,
+                'lounge_visits' => $added,
+                
+                  // lounge ledger
+                'lounge_before' => $loungeBefore,
+
+                'lounge_after' => $loungeAfter,
+
+                'lounge_used' => 0,
+
                 'source' => 'Full_payment',
                 'channel' => 'lounge',
-                'reference_id' => $invoice->id
+                'reference_id' => $invoice->id,
+                'expiry_date'   => $expiryDate
             ]);
         }
         
@@ -87,14 +111,29 @@ class LoyaltyService
             $points = ($rule->points_type == 'percentage')
                 ? ($amount * $rule->points_value) / 100
                 : $rule->points_value;
-                
+
+             $expiryDate = Carbon::now()
+                            ->addDays($rule->points_expiry_days)
+                            ->toDateString();
+
+            $beforePoints = $user->total_points;
+
+            $afterPoints = $beforePoints + $points;
+
+            $user->increment('total_points', $points);
+
             WalletTransaction::create([
                 'user_id' => $user->id,
                 'type' => 'credit',
                 'points' => $points,
+                // Point ledger
+                'balance_before' => $beforePoints,
+                'balance_after' => $afterPoints,
+                
                 'source' => 'Full_payment',
                 'channel' => 'points',
-                'reference_id' => $invoice->id
+                'reference_id' => $invoice->id,
+                'expiry_date'   => $expiryDate
             ]);
 
             $user->increment('total_points', $points);
