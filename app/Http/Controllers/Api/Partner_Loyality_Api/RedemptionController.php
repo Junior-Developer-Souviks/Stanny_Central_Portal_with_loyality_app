@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api\Partner_Loyality_Api;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\RedemptionRule;
+use App\Models\User;
 use App\Models\WalletTransaction;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 
@@ -36,7 +37,7 @@ class RedemptionController extends Controller
 
                 'card_number' => $customer->card_number,
 
-                'pin_number'  => $customer->pin,
+                'pin_number'  => Helper::decryptData($customer->pin),
                 
                 'total_points' => $customer->total_points,
 
@@ -56,9 +57,9 @@ class RedemptionController extends Controller
     
             // STEP 1: Validate Request
             $validated = $request->validate([
-                'qr_code'  => 'required',
+                'customer_id'=>'required|exists:users,id',
                 'pin'      => 'required|digits:5',
-                'quantity' => 'required|integer|min:1',
+                'quantity' => 'required|min:1',
             ]);
     
             $quantity = $validated['quantity'] ?? 1;
@@ -97,11 +98,14 @@ class RedemptionController extends Controller
             }
     
             // STEP 3: Find Customer
-            $customer = User::where('qr_code', $validated['qr_code'])
-                ->where('user_type', 1)
-                ->lockForUpdate()
-                ->first();
-    
+            // $customer = User::where('qr_code', $validated['qr_code'])
+            //     ->where('user_type', 1)
+            //     ->lockForUpdate()
+            //     ->first();
+
+            $customer = User::lockForUpdate()
+                        ->find($validated['customer_id']);
+           
             if (!$customer) {
                 return response()->json([
                     'status' => false,
@@ -124,7 +128,6 @@ class RedemptionController extends Controller
             */
     
             if ($redeemType == 'points') {
-    
                 $rule = RedemptionRule::where('channel', $channel)
                     ->where('status', 1)
                     ->first();
@@ -151,7 +154,7 @@ class RedemptionController extends Controller
                 }
     
                 $totalPointsBefore = $customer->total_points;
-    
+
                 $deductPoints = round($quantity * $rule->ratio, 2);
                 // dd($deductPoints);
 
@@ -163,19 +166,46 @@ class RedemptionController extends Controller
                 }
     
                 // Deduct
+                $pointsBefore = $customer->total_points;
+
                 $customer->total_points -= $deductPoints;
                 $customer->save();
-    
+
+                $pointsAfter = $customer->total_points;
+                
                 WalletTransaction::create([
-                    'user_id'      => $customer->id,
-                    'type'         => 'debit',
-                    'points'       => $deductPoints,
-                    'source'       => 'point_redemption',
-                    'channel'      => $channel,
-                    'reference_id' => $staff->id,
-                    'created_at'   => now(),
-                    'updated_at'   => now()
+                    'user_id' => $customer->id,
+
+                    'type' => 'debit',
+
+                    // point ledger
+                    'points' => $deductPoints,
+
+                    'balance_before' => $pointsBefore,
+                    'balance_after'  => $pointsAfter,
+
+
+                    // lounge empty
+                    'lounge_before' => null,
+                    'lounge_visits' => null,
+                    'lounge_after'  => null,
+                    'lounge_used'   => null,
+
+
+                    'source' => 'point_redemption',
+                    'channel' => $channel,
+
+                    'redeemed_by' => $staff->id,
+
+                    'expiry_date' => null,
+
+                    'created_at' => now(),
+                    'updated_at' => now()
                 ]);
+    
+                
+
+                
     
                 DB::commit();
     
@@ -187,9 +217,14 @@ class RedemptionController extends Controller
                         'channel' => $channel,
                         'redeem_type' => $redeemType,
                         'quantity_used' => $quantity,
-                        'total_points_before' => $totalPointsBefore,
-                        'deducted_points' => $deductPoints,
-                        'remaining_points' => $customer->total_points
+                         'points_before' => $pointsBefore,
+                        'points_used' => $deductPoints,
+                        'points_after' => $pointsAfter,
+
+                        'transaction_type' => 'debit',
+                        'source' => 'point_redemption',
+                        'redeemed_by' => $staff->name ?? null,
+                        'date' => now()->format('Y-m-d H:i:s')
                     ]
                 ]);
             }
@@ -212,6 +247,7 @@ class RedemptionController extends Controller
                         'message' => 'No lounge visits available'
                     ], 422);
                 }
+
     
                 if ($quantity > $availableVisits) {
                     return response()->json([
@@ -219,21 +255,49 @@ class RedemptionController extends Controller
                         'message' => "Only {$availableVisits} visit's available, you requested {$quantity}"
                     ], 422);
                 }
-                
+
+                $loungeBefore = $customer->lounge_visits_total - $customer->lounge_visits_used;
+               
                 // Deduct
                 $customer->lounge_visits_used += $quantity;
                 
                 $customer->save();
-    
-                WalletTransaction::create([
-                    'user_id'       => $customer->id,
-                    'type'          => 'debit',
+
+                $loungeAfter =  $loungeBefore - $quantity;
+                    
+                
+               WalletTransaction::create([
+                    'user_id' => $customer->id,
+
+                    'type' => 'debit',
+
+
+                    // points empty
+                    'points' => 0,
+
+                    'balance_before' => null,
+                    'balance_after' => null,
+
+
+                    // lounge ledger
+                    'lounge_before' => $loungeBefore,
+
                     'lounge_visits' => $quantity,
-                    'source'        => 'lounge_redemption',
-                    'channel'       => $channel,
-                    'reference_id'  => $staff->id,
-                    'created_at'    => now(),
-                    'updated_at'    => now()
+
+                    'lounge_after' => $loungeAfter,
+
+                    'lounge_used' => $quantity,
+
+
+                    'source' => 'lounge_redemption',
+
+                    'channel' => $channel,
+
+                    'redeemed_by' => $staff->id,
+
+
+                    'created_at' => now(),
+                    'updated_at' => now()
                 ]);
     
                 DB::commit();
@@ -243,13 +307,18 @@ class RedemptionController extends Controller
                     'message' => 'Lounge redeemed successfully',
                     'data' => [
                         'customer_name' => $customer->name,
+
                         'channel' => $channel,
                         'redeem_type' => $redeemType,
-                        'quantity_used' => $quantity,
-                        'remaining_lounge_visits' =>
-                            $customer->lounge_visits_total
-                            -
-                            $customer->lounge_visits_used
+
+                        'lounge_before' => $loungeBefore,
+                        'lounge_used' => $quantity,
+                        'lounge_after' => $loungeAfter,
+
+                        'transaction_type' => 'debit',
+                        'source' => 'lounge_redemption',
+
+                        'date' => now()->format('Y-m-d H:i:s')
                     ]
                 ]);
             }

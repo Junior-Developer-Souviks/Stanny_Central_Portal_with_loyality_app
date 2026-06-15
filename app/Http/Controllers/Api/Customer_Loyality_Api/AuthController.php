@@ -123,7 +123,7 @@ class AuthController extends Controller
                 'type'                => 1,
                 'qr_code'             => Str::uuid(),
                 'card_number'         => 'CARD' . time() . rand(10, 99),
-                'pin'                 => $plainPin,
+                'pin'                 => Helper::encryptData($plainPin),
                 'total_points'        => $welcomeBonus
             ]);
     

@@ -73,7 +73,7 @@ class LoyaltyService
                             ->addDays($rule->lounge_expiry_days)
                             ->toDateString();
 
-            $loungeBefore = $user->lounge_visits_total;
+            $loungeBefore = $user->lounge_visits_total - $user->lounge_visits_used;;
 
             $added = $rule->lounge_visits;
 
@@ -108,9 +108,9 @@ class LoyaltyService
         // =========================
         if ($rule->reward_type == 'points') {
 
-            $points = ($rule->points_type == 'percentage')
-                ? ($amount * $rule->points_value) / 100
-                : $rule->points_value;
+           $points = $rule->points_type == 'percentage'
+                ? round(($amount * $rule->points_value) / 100, 2)
+                : round($rule->points_value, 2);
 
              $expiryDate = Carbon::now()
                             ->addDays($rule->points_expiry_days)
@@ -136,7 +136,6 @@ class LoyaltyService
                 'expiry_date'   => $expiryDate
             ]);
 
-            $user->increment('total_points', $points);
         }
         
     }

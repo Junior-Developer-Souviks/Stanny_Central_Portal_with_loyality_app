@@ -13,6 +13,8 @@ use App\Models\Product;
 use App\Models\StockFabric;
 use App\Models\StockProduct;
 use App\Models\OrderStockEntry;
+use Illuminate\Support\Facades\Crypt;
+
 
 class Helper
 {
@@ -23,6 +25,23 @@ class Helper
      * @param string $folderName
      * @return string The file path of the uploaded image
      */
+
+
+
+    
+
+       public static function encryptData($value)
+        {
+            return Crypt::encryptString($value);
+        }
+        
+       public static function decryptData($value)
+        {
+            return Crypt::decryptString($value);
+        }
+
+    
+
     public static function uploadImage($image, $folderName)
     {
         // Ensure the image is valid
@@ -241,6 +260,8 @@ class Helper
 
         return $map[$name] ?? [];
     }
+
+
     
  
    
