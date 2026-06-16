@@ -489,6 +489,29 @@
                     </a>
                 </li>
             @endif
+
+             {{-- @if ($this->hasPermissionByParent('report_management')) --}}
+            {{-- Report management --}}
+            <li class="nav-item">
+                <a class="nav-link text-white {{ request()->is('admin/report*') ? 'active bg-gradient-primary' : '' }}"
+                    href="#BannerManagementSubmenu" data-bs-toggle="collapse" aria-expanded="{{ request()->is('admin/report*') ? 'true' : 'false' }}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">account_balance</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Banner Management</span>
+                </a>
+            </li>
+            <ul id="BannerManagementSubmenu" class="collapse list-unstyled ms-4 {{ request()->is('admin/banners*') ? 'show' : '' }}">
+                {{-- @if ($this->hasPermission('staff_listing')) --}}
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/banners') ? 'active' : '' }}"
+                        href="{{ route('banners.list') }}">
+                        Banners
+                        </a>
+                    </li>
+                {{-- @endif --}}
+            </ul>
+            {{-- @endif --}}
             
            
            {{-- @if ($this->hasPermissionByParent('report_management')) --}}

@@ -89,7 +89,13 @@ class RedemptionController extends Controller
                 $channel = 'store_sales';
                 $redeemType = 'points';
     
-            } else {
+            } 
+            elseif ($staff->designation == 2) {
+    
+                $channel = 'sales_person';
+                $redeemType = 'points';
+    
+            }else {
     
                 return response()->json([
                     'status' => false,
@@ -114,7 +120,7 @@ class RedemptionController extends Controller
             }
     
             // STEP 4: Validate PIN
-            if ($validated['pin'] != $customer->pin) {
+            if ($validated['pin'] != Helper::decryptData($customer->pin)) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Invalid PIN'

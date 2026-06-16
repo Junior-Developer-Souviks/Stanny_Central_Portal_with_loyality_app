@@ -68,6 +68,11 @@ class TransactionController extends Controller
                   ->where('channel', 'store_sales');
         }
 
+        if ($staff->designation == 2) {
+            $query->where('source', 'point_redemption')
+                  ->where('channel', 'sales_person');
+        }
+
         // Date filters
         if ($request->from) {
             $query->whereDate('created_at', '>=', $request->from);
