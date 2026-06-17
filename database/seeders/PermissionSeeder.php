@@ -86,6 +86,15 @@ class PermissionSeeder extends Seeder
             ['parent_name' => 'master_management', 'name' => 'business_type_index', 'route' => 'business_type.index'],
             ['parent_name' => 'master_management', 'name' => 'country_index', 'route' => 'country.index'],
 
+            ['parent_name' => 'loyality_management', 'name' => 'loyality_rule_index', 'route' => 'loyality-rule.loyality_rule'],
+            ['parent_name' => 'loyality_management', 'name' => 'loyality_rule_settings', 'route' => 'loyality-rule.settings'],
+
+            ['parent_name' => 'banner_management', 'name' => 'banner_list', 'route' => 'banners.list'],
+
+            ['parent_name' => 'loyalty_ledger', 'name' => 'loyalty_ledger', 'route' => 'loyalty-ledger.index'],
+
+            
+
 
         ];
 

@@ -180,7 +180,7 @@
                         <tr>
                              
                             <td class="align-center">
-                                <span class="text-dark text-sm font-weight-bold mb-0">{{ env('ORDER_PREFIX').
+                                <span class="text-dark text-sm font-weight-bold mb-0">{{ config('app.order_prefix').
                                     $order->order_number }}</span><br>
                                 <p class="small text-muted mb-1 badge bg-warning">{{ $order->created_at->format('Y-m-d
                                     H:i') }}</p>

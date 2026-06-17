@@ -13,7 +13,7 @@ use App\Http\Livewire\BusinessType\BusinessTypeIndex;
 use App\Http\Livewire\Country\CountryIndex;
 use App\Http\Livewire\CustomerDetails;
 use App\Http\Livewire\CustomerEdit;
-use App\Http\Livewire\CustomerLoyality\{LoyalityRule,ManageSettings,BannerManager};
+use App\Http\Livewire\CustomerLoyality\{LoyalityRule,ManageSettings,BannerManager,LoyaltyLedger};
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\ExampleLaravel\UserManagement;
 use App\Http\Livewire\ExampleLaravel\UserProfile;
@@ -240,15 +240,17 @@ Route::group(['prefix' => 'admin','middleware' => 'admin'], function () {
     
     });
 
+    Route::prefix('loyalty-ledger')->name('loyalty-ledger.')->group(function() {
+        Route::get('/', LoyaltyLedger::class)->name('index')->middleware('check.permission');
+    });
+
     Route::prefix('banners')->name('banners.')->group(function() {
-        Route::get('/', BannerManager::class)->name('list');
-    
+        Route::get('/', BannerManager::class)->name('list')->middleware('check.permission');
     });
     
     Route::prefix('loyality-rule')->name('loyality-rule.')->group(function() {
         Route::get('/', LoyalityRule::class)->name('loyality_rule')->middleware('check.permission');
-         Route::get('/settings', ManageSettings::class)->name('settings');
-    
+        Route::get('/settings', ManageSettings::class)->name('settings')->middleware('check.permission');
     });
         
         

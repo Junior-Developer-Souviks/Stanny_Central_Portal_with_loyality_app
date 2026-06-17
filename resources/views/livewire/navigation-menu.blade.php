@@ -491,12 +491,12 @@
             @endif
 
              {{-- @if ($this->hasPermissionByParent('report_management')) --}}
-            {{-- Report management --}}
+            {{-- Banner management --}}
             <li class="nav-item">
-                <a class="nav-link text-white {{ request()->is('admin/report*') ? 'active bg-gradient-primary' : '' }}"
-                    href="#BannerManagementSubmenu" data-bs-toggle="collapse" aria-expanded="{{ request()->is('admin/report*') ? 'true' : 'false' }}">
+                <a class="nav-link text-white {{ request()->is('admin/banners*') ? 'active bg-gradient-primary' : '' }}"
+                    href="#BannerManagementSubmenu" data-bs-toggle="collapse" aria-expanded="{{ request()->is('admin/banners*') ? 'true' : 'false' }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">account_balance</i>
+                            <i class="material-icons opacity-10">view_carousel</i>
                     </div>
                     <span class="nav-link-text ms-1">Banner Management</span>
                 </a>
@@ -507,6 +507,29 @@
                         <a class="nav-link text-white {{ request()->is('admin/banners') ? 'active' : '' }}"
                         href="{{ route('banners.list') }}">
                         Banners
+                        </a>
+                    </li>
+                {{-- @endif --}}
+            </ul>
+            {{-- @endif --}}
+
+              {{-- @if ($this->hasPermissionByParent('report_management')) --}}
+            {{-- Loyalty management --}}
+            <li class="nav-item">
+                <a class="nav-link text-white {{ request()->is('admin/loyalty-ledger*') ? 'active bg-gradient-primary' : '' }}"
+                    href="#LedgerManagementSubmenu" data-bs-toggle="collapse" aria-expanded="{{ request()->is('admin/loyalty-ledger*') ? 'true' : 'false' }}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">receipt_long</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Loyalty Ledger</span>
+                </a>
+            </li>
+            <ul id="LedgerManagementSubmenu" class="collapse list-unstyled ms-4 {{ request()->is('admin/loyalty-ledger*') ? 'show' : '' }}">
+                {{-- @if ($this->hasPermission('staff_listing')) --}}
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/loyalty-ledger') ? 'active' : '' }}"
+                        href="{{ route('loyalty-ledger.index') }}">
+                         Ledger
                         </a>
                     </li>
                 {{-- @endif --}}

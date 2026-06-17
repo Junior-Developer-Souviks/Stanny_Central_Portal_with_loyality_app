@@ -14,6 +14,8 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::middleware('auth:sanctum', 'token.session')->group(function () {
         Route::get('/banners', [BannerController::class, 'index']);
         Route::post('/update-profile', [AuthController::class, 'updateProfile']);
+        
+        Route::post('/transaction/history', [TransactionController::class, 'customerTransactionHistory']);
         Route::post('/rewards/history', [TransactionController::class, 'rewardsHistory']);
         Route::post('/customer/photo/upload', [CustomerPhotoController::class, 'upload']);
         Route::get('/customer/photo/show', [CustomerPhotoController::class, 'show']);

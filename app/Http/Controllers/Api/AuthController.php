@@ -63,7 +63,7 @@ class AuthController extends Controller
         }
 
         $userLogin = UserLogin::where('device_id', $request->device_id)->first();
-
+            
         if ($userLogin) {
             return response()->json([
                 'message' => 'Device found, use MPIN to login',
@@ -75,64 +75,10 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Device not registered, login with OTP first',
             'show_mpin' => false
-        ], 200);
+        ], 500);
     }
 
-    // public function userLogin(Request $request){
-    //    // dd('hi');
-    //     $validator = Validator::make($request->all(),[
-    //         'country_code' => 'required',
-    //         'mobile' => [
-    //         'required',
-    //         function ($attribute, $value, $fail) {
-    //             $exists = User::where('phone', $value)
-    //                         ->where('user_type', 0)
-    //                         ->exists();
-
-    //             if (! $exists) {
-    //                 $fail('The selected mobile number is invalid or does not belong to a valid user.');
-    //             }
-    //         },
-    //     ],
-    //         'device_id' => 'required'
-    //     ]);
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => $validator->errors()->first(), // Returns only the first error message
-    //         ], 422);
-    //     }
-
-    //     // Check if the user already exists in user_logins
-    //     $userLogin = UserLogin::where('country_code', $request->country_code)
-    //      ->where('mobile', $request->mobile)
-    //      ->first();
-    //      $user = User::where('country_code_phone', $request->country_code)
-    //      ->where('phone', $request->mobile)
-    //      ->first();
-
-    //     if ($userLogin && $userLogin->is_verified) {
-    //         return response()->json([
-    //             'message' => 'User already verified, use MPIN to login',
-    //             'show_mpin' => true
-    //         ], 200);
-    //     }
-
-    //     // Generate and store OTP
-    //     // $otp = rand(1000, 9999);
-    //     $otp = 1234;
-    //     UserLogin::updateOrCreate(
-    //         ['user_id'=>$user->id,'country_code' => $request->country_code, 'mobile' => $request->mobile],
-    //         ['otp' => $otp, 'device_id' => $request->device_id]
-    //     );
-
-    //     // Send OTP (Replace with SMS API)
-    //     return response()->json([
-    //         'status' => true,
-    //         'message' => 'OTP sent successfully',
-    //         'otp' => $otp // Remove in production
-    //     ], 200);
-    // }
+   
 
     // Step 1:
     public function userLogin(Request $request)
