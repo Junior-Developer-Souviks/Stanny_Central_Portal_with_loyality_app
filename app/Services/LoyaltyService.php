@@ -59,8 +59,6 @@ class LoyaltyService
         $rule = LoyaltyRule::where('status', 1)
             ->where('min_amount', '<=', $amount)
             ->where('max_amount', '>=', $amount)
-            //  ->where('effective_date', '<=', $orderCreatedDate) 
-            // ->orderBy('effective_date', 'desc')   
             ->first();
 
         if (!$rule) return;
@@ -73,7 +71,7 @@ class LoyaltyService
                             ->addDays($rule->lounge_expiry_days)
                             ->toDateString();
 
-            $loungeBefore = $user->lounge_visits_total - $user->lounge_visits_used;;
+            $loungeBefore = $user->lounge_visits_total - $user->lounge_visits_used;
 
             $added = $rule->lounge_visits;
 

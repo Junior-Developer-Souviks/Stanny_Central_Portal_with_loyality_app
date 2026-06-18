@@ -1,7 +1,129 @@
 <div class="container">
+    <style>
+       /* Common */
+        .points-card{
+            height:90px;
+            border-radius:12px;
+            overflow:hidden;
+            transition:
+                transform .35s cubic-bezier(.25,.8,.25,1),
+                box-shadow .35s ease;
+        }
 
+
+        .points-card:hover{
+            transform:translateY(-5px) scale(1.01);
+            box-shadow:0 18px 35px rgba(0,0,0,.18);
+        }
+
+
+        .points-card .card-header{
+            height:100%;
+            position:relative;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:15px 20px;
+            color:#fff;
+        }
+
+
+
+        .dash-big-icon{
+            width:75px;
+            height:75px;
+            opacity:.35;
+        }
+
+
+        .dash-big-icon svg{
+            width:65px;
+            height:65px;
+        }
+
+
+
+        .card-content{
+            position:relative;
+            z-index:2;
+            text-align:right;
+        }
+
+
+        .card-content h2{
+            color:white;
+            font-size:14px;
+            font-weight:600;
+            margin:0;
+        }
+
+
+        .card-content h3{
+            color:white;
+            font-size:28px;
+            font-weight:700;
+            margin:0;
+        }
+
+
+
+        /* ===================
+        POINTS COLORS
+        =================== */
+
+
+        .point-theme{
+            background:#009cc7;
+        }
+
+
+        .point-theme.green{
+            background:#00a86b;
+        }
+
+
+        .point-theme.orange{
+            background:#f39c12;
+        }
+
+
+        .point-theme.red{
+            background:#e34b3d;
+        }
+
+
+
+        /* ===================
+        LOUNGE COLORS
+        =================== */
+
+
+        .lounge-theme{
+            background:#673ab7;
+        }
+
+
+        .lounge-theme.green{
+            background:#008f5d;
+        }
+
+
+        .lounge-theme.orange{
+            background:#ff8c00;
+        }
+
+
+        .lounge-theme.red{
+            background:#c62828;
+        }
+
+        .vertical-plane svg {
+            transform: rotate(90deg); /* makes it vertical */
+            transform-origin: center;
+        }
+    </style>
     {{-- ─────────────────────────────────────────────────────────────────────── --}}
-    {{-- PAGE TITLE                                                              --}}
+    {{-- PAGE TITLE --}}
     {{-- ─────────────────────────────────────────────────────────────────────── --}}
     <section class="admin__title">
         <h5>Ledger Report</h5>
@@ -9,7 +131,7 @@
 
 
     {{-- ─────────────────────────────────────────────────────────────────────── --}}
-    {{-- FILTERS                                                                 --}}
+    {{-- FILTERS --}}
     {{-- ─────────────────────────────────────────────────────────────────────── --}}
     <section>
         <div class="search__filter">
@@ -21,38 +143,30 @@
                         {{-- Search --}}
                         <div class="col-auto" style="margin-top: -27px;">
                             <label class="date_lable mb-1">Search</label>
-                            <input type="text"
-                                   wire:model="search"
-                                   wire:keyup="applyFilters"
-                                   class="form-control select-md bg-white search-input"
-                                   placeholder="Search by customer name or phone"
-                                   style="width: 300px;">
+                            <input type="text" wire:model="search" wire:keyup="applyFilters"
+                                class="form-control select-md bg-white search-input"
+                                placeholder="Search by customer name or phone" style="width: 300px;">
                         </div>
 
                         {{-- Start Date --}}
                         <div class="col-auto" style="margin-top: -27px;">
                             <label class="date_lable">Start Date</label>
-                            <input type="date"
-                                   wire:model="from"
-                                   wire:change="applyFilters"
-                                   class="form-control select-md bg-white">
+                            <input type="date" wire:model="from" wire:change="applyFilters"
+                                class="form-control select-md bg-white">
                         </div>
 
                         {{-- End Date --}}
                         <div class="col-auto" style="margin-top: -27px;">
                             <label class="date_lable">End Date</label>
-                            <input type="date"
-                                   wire:model="to"
-                                   wire:change="applyFilters"
-                                   class="form-control select-md bg-white">
+                            <input type="date" wire:model="to" wire:change="applyFilters"
+                                class="form-control select-md bg-white">
                         </div>
 
                         {{-- Type --}}
                         <div class="col-auto" style="margin-top: -27px;">
                             <label class="date_lable">Type</label>
-                            <select wire:model="type"
-                                    wire:change="applyFilters"
-                                    class="form-control select-md bg-white">
+                            <select wire:model="type" wire:change="applyFilters"
+                                class="form-control select-md bg-white">
                                 <option value="">All Types</option>
                                 <option value="earned">Earned</option>
                                 <option value="redeemed">Redeemed</option>
@@ -64,9 +178,8 @@
                         {{-- Channel --}}
                         <div class="col-auto" style="margin-top: -27px;">
                             <label class="date_lable">Channel</label>
-                            <select wire:model="channel"
-                                    wire:change="applyFilters"
-                                    class="form-control select-md bg-white">
+                            <select wire:model="channel" wire:change="applyFilters"
+                                class="form-control select-md bg-white">
                                 <option value="">All Channels</option>
                                 <option value="store">Store</option>
                                 <option value="grocery">Grocery</option>
@@ -96,15 +209,15 @@
                         <div class="col-auto">
                             <div class="btn-group" role="group">
                                 <button wire:click="$set('tab','all')"
-                                        class="btn select-md {{ $tab === 'all'    ? 'btn-success'        : 'btn-outline-success' }}">
+                                    class="btn select-md {{ $tab === 'all'    ? 'btn-success'        : 'btn-outline-success' }}">
                                     All
                                 </button>
                                 <button wire:click="$set('tab','points')"
-                                        class="btn select-md {{ $tab === 'points' ? 'btn-success'        : 'btn-outline-success' }}">
+                                    class="btn select-md {{ $tab === 'points' ? 'btn-success'        : 'btn-outline-success' }}">
                                     Points
                                 </button>
                                 <button wire:click="$set('tab','lounge')"
-                                        class="btn select-md {{ $tab === 'lounge' ? 'btn-secondary'      : 'btn-outline-secondary' }}">
+                                    class="btn select-md {{ $tab === 'lounge' ? 'btn-secondary'      : 'btn-outline-secondary' }}">
                                     Lounge
                                 </button>
                             </div>
@@ -112,17 +225,14 @@
 
                         {{-- Clear --}}
                         <div class="col-auto">
-                            <button wire:click="clearFilters"
-                                    class="btn btn-outline-danger select-md">
+                            <button wire:click="clearFilters" class="btn btn-outline-danger select-md">
                                 Clear
                             </button>
                         </div>
 
                         {{-- Export CSV --}}
                         <div class="col-auto">
-                            <a href="javascript:void(0)"
-                               wire:click="export"
-                               class="btn btn-outline-success select-md">
+                            <a href="javascript:void(0)" wire:click="export" class="btn btn-outline-success select-md">
                                 <i class="fas fa-file-csv me-1"></i> Export CSV
                             </a>
                         </div>
@@ -136,99 +246,368 @@
 
 
     {{-- ─────────────────────────────────────────────────────────────────────── --}}
-    {{-- SUMMARY METRIC CARDS                                                   --}}
+    {{-- SUMMARY METRIC CARDS --}}
     {{-- ─────────────────────────────────────────────────────────────────────── --}}
     <div class="row g-3 my-2">
 
-        {{-- Points issued --}}
+
+        {{-- Points Issued --}}
         <div class="col-6 col-md-3">
-            <div class="card text-center py-3">
-                <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10 mb-1">Points Issued</p>
-                <h5 class="font-weight-bold text-success mb-0">{{ ($summary['points']['issued'] ?? 0) }}</h5>
-                <p class="text-xs text-muted mt-1">This period</p>
+            <div class="card data-card points-card point-theme">
+
+                <div class="card-header">
+
+                 <div class="dash-big-icon">
+                    <svg viewBox="0 0 24 24" width="100%" height="100%">
+                        <!-- Shopping Cart Base -->
+                        <path fill="currentColor" 
+                            d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zM7 15h11.5c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.37-.66-.11-1.48-.87-1.48H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h13v-2H7z"/>
+                        
+                        <!-- Loyalty Star (Centered inside the cart basket) -->
+                        <path fill="#fff" 
+                            d="M13 7.7l1.1 2.2 2.4.4-1.7 1.7.4 2.4-2.2-1.2-2.2 1.2.4-2.4-1.7-1.7 2.4-.4z"/>
+                    </svg>
+                </div>
+
+
+                    <div class="card-content">
+                        <h2>Points Issued</h2>
+
+                        <h3>
+                            {{ $summary['points']['issued'] ?? 0 }}
+                        </h3>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        {{-- Points redeemed --}}
+
+
+        {{-- Points Redeemed --}}
         <div class="col-6 col-md-3">
-            <div class="card text-center py-3">
-                <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10 mb-1">Points Redeemed</p>
-                <h5 class="font-weight-bold mb-0" style="color:red;">{{ ($summary['points']['redeemed'] ?? 0) }}</h5>
-                <p class="text-xs text-muted mt-1">This period</p>
+            <div class="card data-card points-card point-theme green">
+                <div class="card-header">
+                    <div class="dash-big-icon">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="7" />
+
+                            <path d="M30 52l15 15 28-35" fill="none" stroke="currentColor" stroke-width="8" />
+                        </svg>
+                    </div>
+
+
+                    <div class="card-content">
+                        <h2>Points Redeemed</h2>
+
+                        <h3>
+                            {{ $summary['points']['redeemed'] ?? 0 }}
+                        </h3>
+                    </div>
+
+
+                </div>
             </div>
         </div>
 
-        {{-- Points expired --}}
+
+
+
+        {{-- Points Expired --}}
         <div class="col-6 col-md-3">
-            <div class="card text-center py-3">
-                <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10 mb-1">Points Expired</p>
-                <h5 class="font-weight-bold text-secondary mb-0">{{ ($summary['points']['expired'] ?? 0) }}</h5>
-                <p class="text-xs text-muted mt-1">This period</p>
+
+            <div class="card data-card points-card point-theme orange">
+
+                <div class="card-header">
+                    <div class="dash-big-icon">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="7" />
+
+                            <path d="M35 35L65 65" stroke="currentColor" stroke-width="8" />
+
+                            <path d="M65 35L35 65" stroke="currentColor" stroke-width="8" />
+                        </svg>
+                    </div>
+
+
+                    <div class="card-content">
+                        <h2>Points Expired</h2>
+
+                        <h3>
+                            {{ $summary['points']['expired'] ?? 0 }}
+                        </h3>
+                    </div>
+
+
+                </div>
             </div>
+
         </div>
 
-        {{-- Points net --}}
+
+
+
+        {{-- Net Outstanding --}}
         <div class="col-6 col-md-3">
-            <div class="card text-center py-3">
-                <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10 mb-1">Net Outstanding</p>
-                <h5 class="font-weight-bold text-info mb-0">{{ ($summary['points']['net_outstanding'] ?? 0) }}</h5>
-                <p class="text-xs text-muted mt-1">Points liability</p>
+
+            <div class="card data-card points-card point-theme red">
+
+
+                <div class="card-header">
+
+
+                    <div class="dash-big-icon">
+
+
+                        <svg viewBox="0 0 100 100">
+
+                            <rect x="25" y="20" width="50" height="60" rx="8" fill="none" stroke="currentColor"
+                                stroke-width="7" />
+
+
+                            <path d="M38 40h25" stroke="currentColor" stroke-width="6" />
+
+
+                            <path d="M38 55h18" stroke="currentColor" stroke-width="6" />
+
+                        </svg>
+
+
+                    </div>
+
+
+
+                    <div class="card-content">
+
+                        <h2>Net Outstanding</h2>
+
+                        <h3>
+                            {{ $summary['points']['net_outstanding'] ?? 0 }}
+                        </h3>
+                    </div>
+                </div>
+
             </div>
+
         </div>
 
-        {{-- Lounge issued --}}
+
+
+
+
+
+        {{-- Lounge Issued --}}
         <div class="col-6 col-md-3">
-            <div class="card text-center py-3">
-                <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10 mb-1">Lounge Issued</p>
-                <h5 class="font-weight-bold mb-0" style="color:#534AB7;">{{ ($summary['lounge']['issued'] ?? 0) }}</h5>
-                <p class="text-xs text-muted mt-1">This period</p>
+
+            <div class="card data-card points-card lounge-theme">
+
+
+                <div class="card-header">
+
+
+                    <div class="dash-big-icon vertical-plane">
+
+                        <svg viewBox="0 0 24 24" width="100%" height="100%">
+                            <path fill="currentColor"
+                                d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9L2 14v2l8-2.5V19l-2 1.5V22l3-1 3 1v-1.5L13 19v-5.5L21 16z"/>
+                        </svg>
+
+                    </div>
+
+
+                    <div class="card-content">
+
+                        <h2>Lounge Issued</h2>
+
+                        <h3>
+                            {{ $summary['lounge']['issued'] ?? 0 }}
+                        </h3>
+
+
+                    </div>
+
+
+                </div>
+
             </div>
+
         </div>
 
-        {{-- Lounge redeemed --}}
+
+
+
+
+
+        {{-- Lounge Redeemed --}}
         <div class="col-6 col-md-3">
-            <div class="card text-center py-3">
-                <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10 mb-1">Lounge Redeemed</p>
-                <h5 class="font-weight-bold mb-0" style="color:#993556;">{{ ($summary['lounge']['redeemed'] ?? 0) }}</h5>
-                <p class="text-xs text-muted mt-1">This period</p>
+
+            <div class="card data-card points-card lounge-theme green">
+
+
+                <div class="card-header">
+
+
+                    <div class="dash-big-icon">
+
+
+                        <svg viewBox="0 0 100 100">
+
+                            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="7" />
+
+
+                            <path d="M30 52L45 67L72 35" fill="none" stroke="currentColor" stroke-width="8" />
+
+
+                        </svg>
+
+
+                    </div>
+
+
+
+                    <div class="card-content">
+
+                        <h2>Lounge Redeemed</h2>
+
+                        <h3>
+                            {{ $summary['lounge']['redeemed'] ?? 0 }}
+                        </h3>
+
+
+                    </div>
+
+
+
+                </div>
+
             </div>
+
         </div>
 
-        {{-- Lounge expired --}}
+
+
+
+
+
+
+        {{-- Lounge Expired --}}
         <div class="col-6 col-md-3">
-            <div class="card text-center py-3">
-                <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10 mb-1">Lounge Expired</p>
-                <h5 class="font-weight-bold text-secondary mb-0">{{ ($summary['lounge']['expired'] ?? 0) }}</h5>
-                <p class="text-xs text-muted mt-1">This period</p>
+
+            <div class="card data-card points-card lounge-theme orange">
+
+
+                <div class="card-header">
+
+
+                    <div class="dash-big-icon">
+
+
+                        <svg viewBox="0 0 100 100">
+
+                            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="7" />
+
+
+                            <path d="M35 35L65 65" stroke="currentColor" stroke-width="8" />
+
+
+                            <path d="M65 35L35 65" stroke="currentColor" stroke-width="8" />
+
+
+                        </svg>
+
+
+                    </div>
+
+
+
+                    <div class="card-content">
+
+                        <h2>Lounge Expired</h2>
+
+                        <h3>
+                            {{ $summary['lounge']['expired'] ?? 0 }}
+                        </h3>
+
+
+                    </div>
+
+
+
+                </div>
+
             </div>
+
         </div>
 
-        {{-- Lounge net --}}
+
+
+
+
+
+        {{-- Lounge Outstanding --}}
         <div class="col-6 col-md-3">
-            <div class="card text-center py-3">
-                <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10 mb-1">Lounge Outstanding</p>
-                <h5 class="font-weight-bold text-info mb-0">{{ ($summary['lounge']['net_outstanding'] ?? 0) }}</h5>
-                <p class="text-xs text-muted mt-1">Visits liability</p>
+
+            <div class="card data-card points-card lounge-theme red">
+
+
+                <div class="card-header">
+
+
+                    <div class="dash-big-icon">
+
+
+                        <svg viewBox="0 0 100 100">
+
+                            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="7" />
+
+
+                            <path d="M50 30V52L68 68" fill="none" stroke="currentColor" stroke-width="7" />
+
+
+                        </svg>
+
+
+                    </div>
+
+
+
+                    <div class="card-content">
+
+                        <h2>Lounge Outstanding</h2>
+
+                        <h3>
+                            {{ $summary['lounge']['net_outstanding'] ?? 0 }}
+                        </h3>
+
+
+                    </div>
+
+
+                </div>
+
             </div>
+
         </div>
+
 
     </div>
+    
 
 
     {{-- Flash messages --}}
     @if(session()->has('message'))
-        <div class="alert alert-success" id="flashMessage">{{ session('message') }}</div>
+    <div class="alert alert-success" id="flashMessage">{{ session('message') }}</div>
     @endif
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+    <div class="alert alert-success">{{ session('success') }}</div>
     @endif
     @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
+    <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
 
     {{-- ═══════════════════════════════════════════════════════════════════════ --}}
-    {{-- POINTS TABLE                                                           --}}
+    {{-- POINTS TABLE --}}
     {{-- ═══════════════════════════════════════════════════════════════════════ --}}
     @if(in_array($tab, ['all', 'points']))
     <div class="card my-2">
@@ -253,7 +632,8 @@
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10"
                                 wire:click="sortBy('customer_name')" style="cursor:pointer;">
                                 Customer
-                                @if($sortField === 'customer_name') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @else ⇅ @endif
+                                @if($sortField === 'customer_name') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @else ⇅
+                                @endif
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
                                 Type
@@ -308,17 +688,18 @@
                             {{-- Type badge --}}
                             <td class="align-middle">
                                 @php
-                                    $typeLabel = $txn->is_expired ? 'expired'
-                                        : ($txn->type === 'credit'
-                                            ? (in_array($txn->source, ['bonus','manual_adjustment','adjustment']) ? 'adjusted' : 'earned')
-                                            : 'redeemed');
-                                    $typeClass = match($typeLabel) {
-                                        'earned'   => 'bg-success',
-                                        'redeemed' => 'bg-warning text-dark',
-                                        'expired'  => 'bg-secondary',
-                                        'adjusted' => 'bg-info',
-                                        default    => 'bg-light text-dark',
-                                    };
+                                $typeLabel = $txn->is_expired ? 'expired'
+                                : ($txn->type === 'credit'
+                                ? (in_array($txn->source, ['bonus','manual_adjustment','adjustment']) ? 'adjusted' :
+                                'earned')
+                                : 'redeemed');
+                                $typeClass = match($typeLabel) {
+                                'earned' => 'bg-success',
+                                'redeemed' => 'bg-warning text-dark',
+                                'expired' => 'bg-secondary',
+                                'adjusted' => 'bg-info',
+                                default => 'bg-light text-dark',
+                                };
                                 @endphp
                                 <span class="badge {{ $typeClass }}">{{ ucfirst($typeLabel) }}</span>
                             </td>
@@ -326,9 +707,9 @@
                             {{-- Points --}}
                             <td class="align-middle">
                                 @if($txn->type === 'debit')
-                                    <span class="text-danger font-weight-bold">−{{ ($txn->points) }}</span>
+                                <span class="text-danger font-weight-bold">−{{ ($txn->points) }}</span>
                                 @else
-                                    <span class="text-success font-weight-bold">+{{ ($txn->points) }}</span>
+                                <span class="text-success font-weight-bold">+{{ ($txn->points) }}</span>
                                 @endif
                             </td>
 
@@ -360,17 +741,17 @@
                             {{-- Expiry --}}
                             <td class="align-middle">
                                 @if($txn->expiry_date)
-                                    @if(\Carbon\Carbon::parse($txn->expiry_date)->isPast())
-                                        <span class="badge bg-danger">
-                                            {{ \Carbon\Carbon::parse($txn->expiry_date)->format('d M Y') }}
-                                        </span>
-                                    @else
-                                        <span class="text-xs text-muted">
-                                            {{ \Carbon\Carbon::parse($txn->expiry_date)->format('d M Y') }}
-                                        </span>
-                                    @endif
+                                @if(\Carbon\Carbon::parse($txn->expiry_date)->isPast())
+                                <span class="badge bg-danger">
+                                    {{ \Carbon\Carbon::parse($txn->expiry_date)->format('d M Y') }}
+                                </span>
                                 @else
-                                    <span class="text-xs text-muted">—</span>
+                                <span class="text-xs text-muted">
+                                    {{ \Carbon\Carbon::parse($txn->expiry_date)->format('d M Y') }}
+                                </span>
+                                @endif
+                                @else
+                                <span class="text-xs text-muted">—</span>
                                 @endif
                             </td>
 
@@ -394,7 +775,7 @@
 
 
     {{-- ═══════════════════════════════════════════════════════════════════════ --}}
-    {{-- LOUNGE TABLE                                                           --}}
+    {{-- LOUNGE TABLE --}}
     {{-- ═══════════════════════════════════════════════════════════════════════ --}}
     @if(in_array($tab, ['all', 'lounge']))
     <div class="card my-2">
@@ -419,7 +800,8 @@
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10"
                                 style="cursor:pointer;" wire:click="sortBy('customer_name')">
                                 Customer
-                                @if($sortField === 'customer_name') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @else ⇅ @endif
+                                @if($sortField === 'customer_name') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @else ⇅
+                                @endif
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
                                 Type
@@ -427,7 +809,8 @@
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10"
                                 style="cursor:pointer;" wire:click="sortBy('lounge_visits')">
                                 Visits
-                                @if($sortField === 'lounge_visits') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @else ⇅ @endif
+                                @if($sortField === 'lounge_visits') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @else ⇅
+                                @endif
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-10">
                                 Before
@@ -477,22 +860,22 @@
                             {{-- Type badge --}}
                             <td class="align-middle">
                                 @php
-                                    $lTypeLabel = $txn->is_expired ? 'expired'
-                                        : ($txn->type === 'credit' ? 'earned' : 'redeemed');
-                                    $lTypeClass = match($lTypeLabel) {
-                                        'earned'   => 'text-white',
-                                        'redeemed' => 'text-white',
-                                        'expired'  => 'bg-secondary',
-                                        default    => 'bg-light text-dark',
-                                    };
-                                    $lTypeBg = match($lTypeLabel) {
-                                        'earned'   => '#534AB7',
-                                        'redeemed' => '#993556',
-                                        default    => '',
-                                    };
+                                $lTypeLabel = $txn->is_expired ? 'expired'
+                                : ($txn->type === 'credit' ? 'earned' : 'redeemed');
+                                $lTypeClass = match($lTypeLabel) {
+                                'earned' => 'text-white',
+                                'redeemed' => 'text-white',
+                                'expired' => 'bg-secondary',
+                                default => 'bg-light text-dark',
+                                };
+                                $lTypeBg = match($lTypeLabel) {
+                                'earned' => '#534AB7',
+                                'redeemed' => '#993556',
+                                default => '',
+                                };
                                 @endphp
-                                <span class="badge {{ $lTypeClass }}"
-                                      @if($lTypeBg) style="background:{{ $lTypeBg }}" @endif>
+                                <span class="badge {{ $lTypeClass }}" @if($lTypeBg) style="background:{{ $lTypeBg }}"
+                                    @endif>
                                     {{ ucfirst($lTypeLabel) }}
                                 </span>
                             </td>
@@ -500,9 +883,9 @@
                             {{-- Visits --}}
                             <td class="align-middle">
                                 @if($txn->type === 'debit')
-                                    <span class="font-weight-bold" style="color:#993556;">−{{ $txn->lounge_visits }}</span>
+                                <span class="font-weight-bold" style="color:#993556;">−{{ $txn->lounge_visits }}</span>
                                 @else
-                                    <span class="font-weight-bold" style="color:#534AB7;">+{{ $txn->lounge_visits }}</span>
+                                <span class="font-weight-bold" style="color:#534AB7;">+{{ $txn->lounge_visits }}</span>
                                 @endif
                             </td>
 
@@ -539,17 +922,17 @@
                             {{-- Expiry --}}
                             <td class="align-middle">
                                 @if($txn->expiry_date)
-                                    @if(\Carbon\Carbon::parse($txn->expiry_date)->isPast())
-                                        <span class="badge bg-danger">
-                                            {{ \Carbon\Carbon::parse($txn->expiry_date)->format('d M Y') }}
-                                        </span>
-                                    @else
-                                        <span class="text-xs text-muted">
-                                            {{ \Carbon\Carbon::parse($txn->expiry_date)->format('d M Y') }}
-                                        </span>
-                                    @endif
+                                @if(\Carbon\Carbon::parse($txn->expiry_date)->isPast())
+                                <span class="badge bg-danger">
+                                    {{ \Carbon\Carbon::parse($txn->expiry_date)->format('d M Y') }}
+                                </span>
                                 @else
-                                    <span class="text-xs text-muted">—</span>
+                                <span class="text-xs text-muted">
+                                    {{ \Carbon\Carbon::parse($txn->expiry_date)->format('d M Y') }}
+                                </span>
+                                @endif
+                                @else
+                                <span class="text-xs text-muted">—</span>
                                 @endif
                             </td>
 
