@@ -73,7 +73,7 @@ class AddOrderSlip extends Component
                 'remarks' => $order_item->remarks,
                 'catlogue_image' => $order_item->catlogue_image,
                 'voice_remark' => $order_item->voice_remark,
-                'priority_level' => $order_item->priority_level,
+                'priority_level' => $order_item->priority_level ?? '',
              ];
                 
             }
@@ -326,16 +326,18 @@ class AddOrderSlip extends Component
         // 2. TL Approval Logic
         // -----------------------------
                if ($userDesignationId == 4) { 
+                    $this->resetErrorBag();
+                    
                     foreach ($this->order_item as $key => $itemData) {
         
-                // Validate priority when TL approves
-                if (($itemData['tl_approved'] ?? false) && empty($itemData['priority_level'])) {
-                    $this->addError(
-                        "order_item.$key.priority_level",
-                        'Please select priority.'
-                    );
-                }
-            }
+                        // Validate priority when TL approves
+                        if (($itemData['tl_approved'] ?? false) && empty($itemData['priority_level'])) {
+                            $this->addError(
+                                "order_item.$key.priority_level",
+                                'Please select priority.'
+                            );
+                        }
+                    }
         
             // Stop execution if validation errors exist
           if ($this->getErrorBag()->isNotEmpty()) {

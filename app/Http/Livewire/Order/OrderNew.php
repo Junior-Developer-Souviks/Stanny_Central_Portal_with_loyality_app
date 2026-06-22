@@ -484,11 +484,31 @@ class OrderNew extends Component
                 $rules["items.$index.cuff_style"]   = 'required_if:items.'.$index.'.cuffs,Other';
             }
 
-             // CLIENT NAME (common)
-            if (in_array('ladies_jacket_suit',$extra) || in_array('shirt',$extra) || in_array('mens_jacket_suit',$extra)) {
+            //  // CLIENT NAME (common)
+            // if (in_array('ladies_jacket_suit',$extra) || in_array('shirt',$extra) || in_array('mens_jacket_suit',$extra)) {
+            //     $rules["items.$index.client_name_required"] = 'required';
+            //     $rules["items.$index.client_name_place"] = 'required_if:items.'.$index.'.client_name_required,Yes';
+            //     $rules["items.$index.client_name_options"] = 'required_if:items.'.$index.'.client_name_required,Yes';
+            // }
+            
+            // CLIENT NAME (common)
+            if (
+                in_array('ladies_jacket_suit',$extra) ||
+                in_array('shirt',$extra) ||
+                in_array('mens_jacket_suit',$extra)
+            ) {
                 $rules["items.$index.client_name_required"] = 'required';
-                $rules["items.$index.client_name_place"] = 'required_if:items.'.$index.'.client_name_required,Yes';
-                $rules["items.$index.client_name_options"] = 'required_if:items.'.$index.'.client_name_required,Yes';
+            
+                $rules["items.$index.client_name_place"] =
+                    'required_if:items.'.$index.'.client_name_required,Yes';
+            }
+            
+            
+            // CLIENT NAME OPTIONS ONLY FOR SHIRT
+            if (in_array('shirt',$extra)) {
+            
+                $rules["items.$index.client_name_options"] =
+                    'required_if:items.'.$index.'.client_name_required,Yes';
             }
         }
 
@@ -651,13 +671,13 @@ class OrderNew extends Component
         // if (request()->hasHeader('X-Livewire') && !request()->hasValidSignature()) {
         //     return;
         // }
-      
+     
         $adminId = Auth::guard('admin')->id();
        
             
         $draftData = [
             'customerType'          => $this->customerType,
-            'customer_id'           => $this->customer_id,
+             'customer_id'           => $this->customer_id,
             'prefix'                => $this->prefix,
             'name'                  => $this->name,
             'company_name'          => $this->company_name,
@@ -684,7 +704,7 @@ class OrderNew extends Component
     
             'salesman'              => $this->salesman,
             'selectedBusinessType'  => $this->selectedBusinessType,
-            // 'order_number'          => $this->order_number,
+            'order_number'          => $this->order_number,
             'air_mail'              => $this->air_mail,
             'billing_amount'        => $this->billing_amount,
     
@@ -702,8 +722,10 @@ class OrderNew extends Component
         // dd($draftData);
     
         OrderDraft::updateOrCreate(
-            ['admin_id' => $adminId],
-            ['draft_data' => $draftData, 'expires_at' => Carbon::now()->addHours(24)]
+            [
+              'admin_id' => $adminId
+            ],
+            ['draft_data' => $draftData, 'order_number' => $this->order_number, 'expires_at' => Carbon::now()->addHours(24)]
         );
     
         $this->lastSavedAt = now()->format('H:i:s');
@@ -715,6 +737,7 @@ class OrderNew extends Component
     public function restoreLatestDraft()
     {
         $draft = OrderDraft::where('admin_id', Auth::guard('admin')->id())
+                    ->where('order_number', $this->order_number)
                     ->latest()->first();
     
         if (!$draft || empty($draft->draft_data)) return;
@@ -895,6 +918,7 @@ class OrderNew extends Component
     {
         try {
             $deleted = OrderDraft::where('admin_id', Auth::guard('admin')->id())
+                        ->where('order_number', $this->order_number)
                         ->delete();
     
             $this->draftId = null;
@@ -1808,8 +1832,8 @@ protected function fillMatchingMeasurements($currentIndex, $sourceIndex)
             }
         }
         // dd($this->all());
+        // dd($this->items);
         $this->validate();
-        
         DB::beginTransaction(); // Begin transaction
         try{
             // Calculate the total amount
@@ -1887,6 +1911,7 @@ protected function fillMatchingMeasurements($currentIndex, $sourceIndex)
 
 
             if ($user) {
+
                 $user->update([
                     'prefix' => $this->prefix,
                     'name' => $this->name,
@@ -2180,12 +2205,50 @@ protected function fillMatchingMeasurements($currentIndex, $sourceIndex)
                     }
 
                      /* ================= CLIENT NAME (COMMON) ================= */
-                    if (in_array('ladies_jacket_suit',$extra) || in_array('shirt',$extra) || in_array('mens_jacket_suit',$extra)) {
-                        $orderItem->client_name_required = $item['client_name_required'] ?? null;
-                        if ($orderItem->client_name_required=="Yes") {
-                            $orderItem->client_name_place = $item['client_name_place'] ?? null;
-                            $orderItem->client_name_options = $item['client_name_options'] ?? null;
-                        }else{
+                    // if (in_array('ladies_jacket_suit',$extra) || in_array('shirt',$extra) || in_array('mens_jacket_suit',$extra)) {
+                    //     $orderItem->client_name_required = $item['client_name_required'] ?? null;
+                    //     if ($orderItem->client_name_required=="Yes") {
+                    //         $orderItem->client_name_place = $item['client_name_place'] ?? null;
+                    //         dd($orderItem->client_name_options);
+                    //         $orderItem->client_name_options = $item['client_name_options'] ?? null;
+                    //     }else{
+                    //         $orderItem->client_name_place = null;
+                    //         $orderItem->client_name_options = null;
+                    //     }
+                    // }
+                    
+                    // CLIENT NAME (COMMON)
+                    if (
+                        in_array('ladies_jacket_suit',$extra) ||
+                        in_array('shirt',$extra) ||
+                        in_array('mens_jacket_suit',$extra)
+                    ) {
+                    
+                        $orderItem->client_name_required =
+                            $item['client_name_required'] ?? null;
+                    
+                    
+                        if ($orderItem->client_name_required == "Yes") {
+                    
+                            // common for all
+                            $orderItem->client_name_place =
+                                $item['client_name_place'] ?? null;
+                    
+                    
+                            // only shirt
+                            if (in_array('shirt',$extra)) {
+                    
+                                $orderItem->client_name_options =
+                                    $item['client_name_options'] ?? null;
+                    
+                            } else {
+                    
+                                $orderItem->client_name_options = null;
+                            }
+                    
+                    
+                        } else {
+                    
                             $orderItem->client_name_place = null;
                             $orderItem->client_name_options = null;
                         }

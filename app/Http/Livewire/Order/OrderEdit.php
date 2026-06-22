@@ -976,10 +976,30 @@ class OrderEdit extends Component
             $rules["items.$index.cuffs"]   = 'required';
         }
 
-        if (in_array('ladies_jacket_suit', $extra) || in_array('shirt', $extra) || in_array('mens_jacket_suit', $extra)) {
+        // if (in_array('ladies_jacket_suit', $extra) || in_array('shirt', $extra) || in_array('mens_jacket_suit', $extra)) {
+        //     $rules["items.$index.client_name_required"] = 'required';
+        //     $rules["items.$index.client_name_place"] = 'required_if:items.'.$index.'.client_name_required,Yes';
+        //     $rules["items.$index.client_name_options"] = 'required_if:items.'.$index.'.client_name_required,Yes';
+        // }
+        
+        // CLIENT NAME (common)
+        if (
+            in_array('ladies_jacket_suit', $extra) ||
+            in_array('shirt', $extra) ||
+            in_array('mens_jacket_suit', $extra)
+        ) {
             $rules["items.$index.client_name_required"] = 'required';
-            $rules["items.$index.client_name_place"] = 'required_if:items.'.$index.'.client_name_required,Yes';
-            $rules["items.$index.client_name_options"] = 'required_if:items.'.$index.'.client_name_required,Yes';
+        
+            $rules["items.$index.client_name_place"] =
+                'required_if:items.'.$index.'.client_name_required,Yes';
+        }
+        
+        
+        // CLIENT NAME OPTIONS (only shirt)
+        if (in_array('shirt', $extra)) {
+        
+            $rules["items.$index.client_name_options"] =
+                'required_if:items.'.$index.'.client_name_required,Yes';
         }
     }
 
@@ -2229,12 +2249,48 @@ protected function resetMeasurements($index)
                             $orderItem->cuffs         = $item['cuffs'] ?? null;            // Regular / French / Other
                             $orderItem->cuff_style    = $item['cuff_style'] ?? null;       // If "Other"
                         }
-                        if (in_array('ladies_jacket_suit',$extra) || in_array('shirt',$extra) || in_array('mens_jacket_suit',$extra)) {
-                            $orderItem->client_name_required = $item['client_name_required'] ?? null;
-                            if ($orderItem->client_name_required=="Yes") {
-                                $orderItem->client_name_place = $item['client_name_place'] ?? null;
-                                $orderItem->client_name_options = $item['client_name_options'] ?? null;
-                            }else{
+                        // if (in_array('ladies_jacket_suit',$extra) || in_array('shirt',$extra) || in_array('mens_jacket_suit',$extra)) {
+                        //     $orderItem->client_name_required = $item['client_name_required'] ?? null;
+                        //     if ($orderItem->client_name_required=="Yes") {
+                        //         $orderItem->client_name_place = $item['client_name_place'] ?? null;
+                        //         $orderItem->client_name_options = $item['client_name_options'] ?? null;
+                        //     }else{
+                        //         $orderItem->client_name_place = null;
+                        //         $orderItem->client_name_options = null;
+                        //     }
+                        // }
+                        
+                        if (
+                            in_array('ladies_jacket_suit',$extra) ||
+                            in_array('shirt',$extra) ||
+                            in_array('mens_jacket_suit',$extra)
+                        ) {
+                        
+                            $orderItem->client_name_required =
+                                $item['client_name_required'] ?? null;
+                        
+                        
+                            if ($orderItem->client_name_required == "Yes") {
+                        
+                                // common for all
+                                $orderItem->client_name_place =
+                                    $item['client_name_place'] ?? null;
+                        
+                        
+                                // only shirt
+                                if (in_array('shirt',$extra)) {
+                        
+                                    $orderItem->client_name_options =
+                                        $item['client_name_options'] ?? null;
+                        
+                                } else {
+                        
+                                    $orderItem->client_name_options = null;
+                                }
+                        
+                        
+                            } else {
+                        
                                 $orderItem->client_name_place = null;
                                 $orderItem->client_name_options = null;
                             }

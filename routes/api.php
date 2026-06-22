@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum', 'token.session')->group(function () {
     Route::get('/customer/list', [AuthController::class, 'customer_list']);
     Route::get('/customer/details/{id}', [AuthController::class, 'customer_details']);
     Route::get('/customer/filter', [AuthController::class, 'customer_filter']);
+    Route::get('/customer/default/data', [AuthController::class, 'customer_default_data']);
     Route::post('/customer/store', [AuthController::class, 'customer_store']);
     Route::post('/customer/update/{id}', [AuthController::class, 'customer_update']);
     Route::get('/customer/order/list', [OrderController::class, 'customer_order_list']);

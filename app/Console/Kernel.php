@@ -15,12 +15,11 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
-
+     
      protected $commands = [
         ExpireLoyaltyRewards::class,    
         NotifyExpiringRewards::class,   
     ];
-
     protected function schedule(Schedule $schedule)
     {
         $hour = config('app.hour');
@@ -32,8 +31,8 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             \Laravel\Sanctum\PersonalAccessToken::where('expires_at', '<', now())->delete();
         })->everyMinute();
-
-        // Expire rewards at midnight
+        
+         // Expire rewards at midnight
         $schedule->command('loyalty:expire')->dailyAt('00:00');
 
         // Notify 3 days before expiry every morning

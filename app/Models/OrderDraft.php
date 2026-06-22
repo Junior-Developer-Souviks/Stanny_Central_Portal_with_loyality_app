@@ -9,7 +9,7 @@ class OrderDraft extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['admin_id', 'draft_data', 'expires_at'];
+    protected $fillable = ['admin_id','order_number','draft_data', 'expires_at'];
 
     protected $casts = [
         'draft_data' => 'array',

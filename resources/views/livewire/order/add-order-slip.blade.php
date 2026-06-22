@@ -444,7 +444,7 @@
                                     @endif
                                     <select wire:model="order_item.{{ $key }}.priority_level"
                                         class="form-control form-control-sm @error('order_item.'.$key.'.priority_level') is-invalid @enderror">
-                                        <option value="" selected hidden>Select Priority</option>
+                                        <option value="" >Select Priority</option>
                                         <option value="Priority">Priority</option>
                                         <option value="Non Priority">Non Priority</option>
                                     </select>

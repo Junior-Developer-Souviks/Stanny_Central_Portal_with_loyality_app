@@ -251,7 +251,302 @@ class OrderController extends Controller
     
    
     
-    public function createOrder(Request $request)
+//     public function createOrder(Request $request)
+// {
+//     DB::beginTransaction();
+
+//     try {
+
+//         $validated = $request->validate([
+//             // Customer
+//             'name'              => 'nullable|string',
+//             'phone'             => 'nullable|string',
+//             'billing_address'   => 'nullable|string',
+
+//             // Payment
+//             'air_mail'          => 'nullable|numeric|min:0',
+//             'paid_amount'       => 'nullable|numeric|min:0',
+
+//             'customer_id'       => 'nullable|integer',
+
+//             'customer_image'    => 'required',
+//             'customer_image.*'  => 'image',
+
+//             'bill_book_copy'    => 'required',
+//             'bill_book_copy.*'  => 'mimes:jpg,jpeg,png,webp,pdf',
+
+//             'verified_video'    => 'nullable',
+//             'verified_video.*'  => 'mimes:mp4,avi,mov',
+
+//             'verified_audio'    => 'nullable',
+//             'verified_audio.*'  => 'file',
+
+//             'items'                 => 'required|array|min:1',
+//             'items.*.product_id'    => 'required|exists:products,id',
+//             'items.*.quantity'      => 'required|numeric|min:1',
+//             'items.*.price'         => 'required|numeric|min:0',
+//         ]);
+
+//         // SAFE ACCESS
+//         $airMail    = $validated['air_mail'] ?? 0;
+//         $paidAmount = $validated['paid_amount'] ?? 0;
+
+//         // TOTAL CALCULATION
+//         $totalProductAmount = collect($validated['items'])->sum(function ($item) {
+//             return $item['price'] * $item['quantity'];
+//         });
+
+//         $totalAmount = $totalProductAmount + $airMail;
+//         $pending     = max(0, $totalAmount - $paidAmount);
+
+//         $user = auth()->user();
+//         $salesmanId = $user->id;
+
+//         // ================= CUSTOMER LOGIC FIXED =================
+//         $customerId    = null;
+//         $prefix        = null;
+//         $customerName  = null;
+//         $customerPhone = null;
+
+//         if (!empty($validated['customer_id'])) {
+
+//             $customer = User::find($validated['customer_id']);
+
+//             if (!$customer) {
+//                 throw new \Exception("Customer not found");
+//             }
+
+//             $customerId    = $customer->id;
+//             $prefix        = $customer->prefix;
+//             $customerName  = $customer->name;
+//             $customerPhone = $customer->phone;
+
+//         } else {
+
+//             $customerName  = $validated['name'] ?? null;
+//             $customerPhone = $validated['phone'] ?? null;
+
+//             // $customer = User::create([
+//             //     'name'  => $customerName,
+//             //     'phone' => $customerPhone,
+//             // ]);
+
+//             // $customerId = $customer->id;
+            
+
+//             // Generate PIN
+//             $plainPin = rand(10000, 99999);
+            
+//             // Welcome bonus
+//             $welcomeBonus = config('loyalty.welcome_bonus', 0);
+            
+//             // CREATE CUSTOMER
+//             $customer = User::create([
+//                 'name'                 => $customerName,
+//                 'phone'                => $customerPhone,
+//                 'user_type'                 => 1,
+            
+//                 // UNIQUE QR
+//                 'qr_code'              => Str::uuid(),
+            
+//                 // UNIQUE CARD NUMBER
+//                 'card_number'          => 'CARD' . time() . rand(10, 99),
+            
+//                 // PIN
+//                 'pin'                  => $plainPin,
+            
+//                 // BONUS
+//                 'total_points'         => $welcomeBonus,
+//             ]);
+            
+//             $customerId = $customer->id;
+            
+            
+//             // WELCOME BONUS ENTRY
+//             if ($welcomeBonus > 0) {
+            
+//                 $expiryDays = config('loyalty.point_expiry_days', 365);
+            
+//                 WalletTransaction::create([
+//                     'user_id'     => $customer->id,
+//                     'type'        => 'credit',
+//                     'points'      => $welcomeBonus,
+//                     'source'      => 'bonus',
+//                     'expiry_date' => now()->addDays($expiryDays),
+//                 ]);
+//             }
+//         }
+
+//         // BILL GENERATION
+//         $billData    = Helper::generateInvoiceBill($salesmanId);
+//         $orderNumber = $billData['number'];
+//         $billId      = $billData['bill_id'];
+
+//         // ADDRESS
+//         $address = UserAddress::where('user_id', $customerId)
+//             ->where('address_type', 1)
+//             ->first();
+
+//         $billingAddress = $address->address ?? ($validated['billing_address'] ?? null);
+
+//         // CREATE ORDER
+//         $order = Order::create([
+//             'order_number'          => $orderNumber,
+//             'prefix'                => $prefix,
+//             'customer_name'         => $customerName,
+//             'customer_email'        => null,
+//             'customer_id'           => $customerId,
+//             'billing_address'       => $billingAddress,
+//             'total_product_amount'  => $totalProductAmount,
+//             'air_mail'              => $airMail,
+//             'paid_amount'          => $paidAmount,
+//              'last_payment_date'     => $paidAmount > 0 ? now() : null,
+
+//             'total_amount'          => $totalAmount,
+//             'created_by'            => $salesmanId,
+//             'team_lead_id'          => $user->parent_id ?? null,
+//         ]);
+
+//         // FILE UPLOADS
+//         $fileTypes = [
+//             'customer_image' => 'client_image',
+//             'bill_book_copy' => 'bill_book_copy',
+//             'verified_video' => 'verified_video',
+//             'verified_audio' => 'verified_audio',
+//         ];
+
+//         foreach ($fileTypes as $field => $folder) {
+
+//             $files = $request->file($field);
+
+//             if ($files) {
+
+//                 $files = is_array($files) ? $files : [$files];
+//                 $paths = [];
+
+//                 foreach ($files as $file) {
+//                     $paths[] = Helper::handleFileUpload($file, $folder);
+//                 }
+
+//                 OrderMultipleFile::create([
+//                     'order_id'  => $order->id,
+//                     'file_type' => $field,
+//                     'file_path' => implode(',', $paths),
+//                 ]);
+//             }
+//         }
+
+//         // ORDER ITEMS
+//         foreach ($validated['items'] as $item) {
+//             //  Fetch product
+//           $product = Product::find($item['product_id']);
+
+//             OrderItem::create([
+//                 'order_id'     => $order->id,
+//                 'product_id'   => $item['product_id'],
+//                 'product_name'  => $product->name ?? null,
+//                 'quantity'     => $item['quantity'],
+//                 'piece_price'  => $item['price'],
+//                 'total_price'  => $item['price'] * $item['quantity'],
+//                 'status'       => 'Hold'
+//             ]);
+//         }
+
+//         // PAYMENT (SAFE)
+//         if ($paidAmount > 0 && $customerId) {
+
+//             $voucherNo = 'PAYRECEIPT' . time();
+
+//             $payment_id = Payment::insertGetId([
+//                 'customer_id'  => $customerId,
+//                 'payment_for'  => 'credit',
+//                 'voucher_no'   => $voucherNo,
+//                 'payment_date' => now()->toDateString(),
+//                 'payment_in'   => 'cash',
+//                 'bank_cash'    => 'cash',
+//                 'payment_mode' => 'cash',
+//                 'amount'       => $paidAmount,
+//                 'narration'    => 'Advance payment for order #' . $orderNumber,
+//                 'created_by'   => $salesmanId,
+//                 'created_from' => 'app',
+//                 'created_at'   => now(),
+//             ]);
+
+//             Ledger::insert([
+//                 'user_type'          => 'customer',
+//                 'customer_id'        => $customerId,
+//                 'transaction_id'     => $voucherNo,
+//                 'transaction_amount' => $paidAmount,
+//                 'payment_id'         => $payment_id,
+//                 'bank_cash'          => 'cash',
+//                 'is_credit'          => 1,
+//                 'is_debit'           => 0,
+//                 'entry_date'         => now()->toDateString(),
+//                 'purpose'            => 'payment_receipt',
+//                 'purpose_description'=> 'Advance payment against order #' . $orderNumber,
+//                 'created_at'         => now(),
+//             ]);
+
+//             Journal::insert([
+//                 'transaction_amount'  => $paidAmount,
+//                 'is_credit'           => 1,
+//                 'is_debit'            => 0,
+//                 'entry_date'          => now()->toDateString(),
+//                 'payment_id'          => $payment_id,
+//                 'bank_cash'           => 'cash',
+//                 'purpose'             => 'payment_receipt',
+//                 'purpose_description' => 'Advance payment against order #' . $orderNumber,
+//                 'purpose_id'          => $voucherNo,
+//                 'created_at'          => now(),
+//             ]);
+
+//             PaymentCollection::insert([
+//                 'customer_id'       => $customerId,
+//                 'user_id'           => $salesmanId,
+//                 'payment_id'        => $payment_id,
+//                 'collection_amount' => $paidAmount,
+//                 'payment_type'      => 'cash',
+//                 'voucher_no'        => $voucherNo,
+//                 'cheque_date'       => now()->toDateString(),
+//                 'is_ledger_added'   => 0,
+//                 'is_approve'        => 0,
+//                 'is_settled'        => 0,
+//                 'created_from'      => 'app',
+//                 'created_at'        => now(),
+//                 'updated_at'        => now(),
+//             ]);
+//         }
+
+//         DB::commit();
+
+//         return response()->json([
+//             'status' => true,
+//             'message' => 'Order created successfully',
+//             'data' => [
+//                 'order_number' => $orderNumber,
+//                 'bill_id' => $billId,
+//                 'order_id' => $order->id,
+//                 'total_product_amount' => $totalProductAmount,
+//                 'air_mail' => $airMail,
+//                 'total_amount' => $totalAmount,
+//                 'paid_amount' => $paidAmount,
+//                 'pending_amount' => $pending,
+//                 'items' => $order->items()->get(),
+//             ]
+//         ], 201);
+
+//     } catch (\Exception $e) {
+//         DB::rollBack();
+
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'Order creation failed',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
+
+ public function createOrder(Request $request)
 {
     DB::beginTransaction();
 
@@ -281,10 +576,10 @@ class OrderController extends Controller
             'verified_audio'    => 'nullable',
             'verified_audio.*'  => 'file',
 
-            'items'                 => 'required|array|min:1',
-            'items.*.product_id'    => 'required|exists:products,id',
-            'items.*.quantity'      => 'required|numeric|min:1',
-            'items.*.price'         => 'required|numeric|min:0',
+            'items'                 => 'nullable|array',
+            'items.*.product_id'    => 'nullable|exists:products,id',
+            'items.*.quantity'      => 'nullable|numeric',
+            'items.*.price'         => 'nullable|numeric',
         ]);
 
         // SAFE ACCESS
@@ -292,8 +587,8 @@ class OrderController extends Controller
         $paidAmount = $validated['paid_amount'] ?? 0;
 
         // TOTAL CALCULATION
-        $totalProductAmount = collect($validated['items'])->sum(function ($item) {
-            return $item['price'] * $item['quantity'];
+        $totalProductAmount = collect($validated['items'] ?? [])->sum(function ($item) {
+            return ($item['price'] ?? 0) * ($item['quantity'] ?? 0);
         });
 
         $totalAmount = $totalProductAmount + $airMail;
@@ -347,34 +642,34 @@ class OrderController extends Controller
                 'user_type'                 => 1,
             
                 // UNIQUE QR
-                'qr_code'              => Str::uuid(),
+                // 'qr_code'              => Str::uuid(),
             
                 // UNIQUE CARD NUMBER
-                'card_number'          => 'CARD' . time() . rand(10, 99),
+                // 'card_number'          => 'CARD' . time() . rand(10, 99),
             
                 // PIN
-                'pin'                  => $plainPin,
+                // 'pin'                  => $plainPin,
             
                 // BONUS
-                'total_points'         => $welcomeBonus,
+                // 'total_points'         => $welcomeBonus,
             ]);
             
             $customerId = $customer->id;
             
             
             // WELCOME BONUS ENTRY
-            if ($welcomeBonus > 0) {
+            // if ($welcomeBonus > 0) {
             
-                $expiryDays = config('loyalty.point_expiry_days', 365);
+            //     $expiryDays = config('loyalty.point_expiry_days', 365);
             
-                WalletTransaction::create([
-                    'user_id'     => $customer->id,
-                    'type'        => 'credit',
-                    'points'      => $welcomeBonus,
-                    'source'      => 'bonus',
-                    'expiry_date' => now()->addDays($expiryDays),
-                ]);
-            }
+            //     WalletTransaction::create([
+            //         'user_id'     => $customer->id,
+            //         'type'        => 'credit',
+            //         'points'      => $welcomeBonus,
+            //         'source'      => 'bonus',
+            //         'expiry_date' => now()->addDays($expiryDays),
+            //     ]);
+            // }
         }
 
         // BILL GENERATION
@@ -437,17 +732,36 @@ class OrderController extends Controller
         }
 
         // ORDER ITEMS
-        foreach ($validated['items'] as $item) {
-            //  Fetch product
-          $product = Product::find($item['product_id']);
+        // foreach ($validated['items'] as $item) {
+        //     //  Fetch product
+        //   $product = Product::find($item['product_id']);
 
+        //     OrderItem::create([
+        //         'order_id'     => $order->id,
+        //         'product_id'   => $item['product_id'],
+        //         'product_name'  => $product->name ?? null,
+        //         'quantity'     => $item['quantity'],
+        //         'piece_price'  => $item['price'],
+        //         'total_price'  => $item['price'] * $item['quantity'],
+        //         'status'       => 'Hold'
+        //     ]);
+        // }
+        
+        foreach (($validated['items'] ?? []) as $item) {
+
+            if(empty($item['product_id'])){
+                continue;
+            }
+        
+            $product = Product::find($item['product_id']);
+        
             OrderItem::create([
                 'order_id'     => $order->id,
                 'product_id'   => $item['product_id'],
-                'product_name'  => $product->name ?? null,
-                'quantity'     => $item['quantity'],
-                'piece_price'  => $item['price'],
-                'total_price'  => $item['price'] * $item['quantity'],
+                'product_name' => $product->name ?? null,
+                'quantity'     => $item['quantity'] ?? 0,
+                'piece_price'  => $item['price'] ?? 0,
+                'total_price'  => ($item['price'] ?? 0) * ($item['quantity'] ?? 0),
                 'status'       => 'Hold'
             ]);
         }

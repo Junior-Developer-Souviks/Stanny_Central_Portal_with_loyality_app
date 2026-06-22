@@ -512,6 +512,32 @@
                 {{-- @endif --}}
             </ul>
             {{-- @endif --}}
+            
+            {{-- Customer marketing --}}
+            <li class="nav-item">
+                <a class="nav-link text-white {{ request()->is('admin/customer/marketing*') ? 'active bg-gradient-primary' : '' }}"
+                    href="#CustomerMarketingSubmenu" data-bs-toggle="collapse" aria-expanded="{{ request()->is('admin/customer/marketing*') ? 'true' : 'false' }}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">view_carousel</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Customer Marketing</span>
+                </a>
+            </li>
+            <ul id="CustomerMarketingSubmenu" class="collapse list-unstyled ms-4 {{ request()->is('admin/customer/marketing*') ? 'show' : '' }}">
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/customer/marketing') ? 'active' : '' }}"
+                        href="{{ route('customer.marketing.list') }}">
+                        Marketing Master
+                        </a>
+                    </li>
+                    <!--<li class="nav-item">-->
+                    <!--    <a class="nav-link text-white {{ request()->is('admin/customer/marketing/photo') ? 'active' : '' }}"-->
+                    <!--    href="{{ route('customer.marketing.photo') }}">-->
+                    <!--    Marketing Photo-->
+                    <!--    </a>-->
+                    <!--</li>-->
+            </ul>
+          
 
               {{-- @if ($this->hasPermissionByParent('report_management')) --}}
             {{-- Loyalty management --}}

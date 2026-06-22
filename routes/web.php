@@ -1,48 +1,49 @@
 <?php
 
-use App\Http\Livewire\{VirtualReality,CustomerIndex,DesignationWisePermissions};
-use App\Http\Livewire\Accounting\{AddPaymentReceipt,PaymentCollectionIndex,AddOpeningBalance,ListOpeningBalance,IndexExpense,AddExpense,EditExpense,CashBookModule,DayCashEntry,ApproveExpense,ApprovePaymentReceipt};
-use App\Http\Livewire\AdminDashboard;
-use App\Http\Livewire\Auth\AdminLogin;
 use App\Http\Livewire\Auth\ForgotPassword;
 use App\Http\Livewire\Auth\Login;
+use App\Http\Livewire\Auth\AdminLogin;
+use App\Http\Livewire\AdminDashboard;
 use App\Http\Livewire\Auth\Register;
 use App\Http\Livewire\Auth\ResetPassword;
 use App\Http\Livewire\Billing;
-use App\Http\Livewire\BusinessType\BusinessTypeIndex;
-use App\Http\Livewire\Country\CountryIndex;
-use App\Http\Livewire\CustomerDetails;
-use App\Http\Livewire\CustomerEdit;
-use App\Http\Livewire\CustomerLoyality\{LoyalityRule,ManageSettings,BannerManager,LoyaltyLedger};
+use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\ExampleLaravel\UserManagement;
 use App\Http\Livewire\ExampleLaravel\UserProfile;
-use App\Http\Livewire\Expense\{ExpenseIndex,DepotExpanse,DailyExpenses,DailyCollection};
-use App\Http\Livewire\Fabric\{FabricsIndex,FabricCategoryIndex};
-use App\Http\Livewire\Measurement\MeasurementIndex;
 use App\Http\Livewire\Notifications;
-use App\Http\Livewire\Order\{OrderIndex, OrderNew, OrderInvoice,OrderEdit,OrderView,LedgerView,AddOrderSlip,InvoiceList,CancelOrderList,InvoiceEdit,AddInvoice,ProformaIndex,ProformaAdd,ProductionOrderIndex,ProductionOrderDetails,OrderLog};
-use App\Http\Livewire\Product\{MasterProduct,AddProduct,UpdateProduct,MasterCategory,MasterSubCategory,FabricIndex,CollectionIndex,GalleryIndex,MasterCatalogue,CataloguePages};
 use App\Http\Livewire\Profile;
-use App\Http\Livewire\PurchaseOrder\{PurchaseOrderIndex,PurchaseOrderCreate,PurchaseOrderEdit,GenerateGrn,PurchaseOrderDetails,GeneratePdf};
-use App\Http\Livewire\Report\{UserLedgerReport};
 use App\Http\Livewire\RTL;
-use App\Http\Livewire\Staff\{DesignationIndex,StaffIndex,StaffAdd,StaffUpdate,StaffView,StaffTask,StaffTaskAdd,StaffCities,SalesmanBillingIndex,MasterBranch};
 use App\Http\Livewire\StaticSignIn;
 use App\Http\Livewire\StaticSignUp;
-use App\Http\Livewire\Stock\{StockIndex,UserLedger,StockAdjustment};
-use App\Http\Livewire\Supplier\SupplierAdd;
-use App\Http\Livewire\Supplier\SupplierDetails;
-use App\Http\Livewire\Supplier\SupplierEdit;
-use App\Http\Livewire\Supplier\SupplierIndex;
 use App\Http\Livewire\Tables;
-use App\Http\Livewire\Todo;
-use App\Http\Livewire\UserAddressForm;
-use App\Models\PurchaseOrder;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Http\Livewire\{VirtualReality,CustomerIndex,DesignationWisePermissions};
 use GuzzleHttp\Middleware;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\Order\{OrderIndex, OrderNew, OrderInvoice,OrderEdit,OrderView,LedgerView,AddOrderSlip,InvoiceList,CancelOrderList,InvoiceEdit,AddInvoice,ProformaIndex,ProformaAdd,ProductionOrderIndex,ProductionOrderDetails,OrderLog};
+use App\Http\Livewire\Product\{MasterProduct,AddProduct,UpdateProduct,MasterCategory,MasterSubCategory,FabricIndex,CollectionIndex,GalleryIndex,MasterCatalogue,CataloguePages};
+use App\Http\Livewire\Staff\{DesignationIndex,StaffIndex,StaffAdd,StaffUpdate,StaffView,StaffTask,StaffTaskAdd,StaffCities,SalesmanBillingIndex,MasterBranch};
+use App\Http\Livewire\Expense\{ExpenseIndex,DepotExpanse,DailyExpenses,DailyCollection};
+use App\Http\Livewire\UserAddressForm;
+use App\Http\Livewire\CustomerEdit;
+use App\Http\Livewire\CustomerDetails;
+use App\Http\Livewire\Todo;
+
+use App\Http\Livewire\Supplier\SupplierIndex;
+use App\Http\Livewire\Supplier\SupplierAdd;
+use App\Http\Livewire\Supplier\SupplierEdit;
+use App\Http\Livewire\Supplier\SupplierDetails;
+use App\Http\Livewire\Measurement\MeasurementIndex;
+use App\Http\Livewire\Fabric\{FabricsIndex,FabricCategoryIndex};
+use App\Http\Livewire\PurchaseOrder\{PurchaseOrderIndex,PurchaseOrderCreate,PurchaseOrderEdit,GenerateGrn,PurchaseOrderDetails,GeneratePdf};
+use App\Http\Livewire\Stock\{StockIndex,UserLedger,StockAdjustment};
+use App\Http\Livewire\Report\{UserLedgerReport};
+use App\Http\Livewire\BusinessType\BusinessTypeIndex;
+use App\Http\Livewire\Country\CountryIndex;
+use App\Http\Livewire\CustomerLoyality\{LoyalityRule,ManageSettings,BannerManager,LoyaltyLedger,CustomerMarketing,CustomerMarketingPhoto};
+use App\Http\Livewire\Accounting\{AddPaymentReceipt,PaymentCollectionIndex,AddOpeningBalance,ListOpeningBalance,IndexExpense,AddExpense,EditExpense,CashBookModule,DayCashEntry,ApproveExpense,ApprovePaymentReceipt};
+// purchase Order pdf
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\PurchaseOrder;
 
 
 /*
@@ -239,8 +240,9 @@ Route::group(['prefix' => 'admin','middleware' => 'admin'], function () {
         Route::get('/', Todo::class)->name('todo-list');
     
     });
-
-    Route::prefix('loyalty-ledger')->name('loyalty-ledger.')->group(function() {
+    
+  // Customer Loyalty Related Routes Start
+   Route::prefix('loyalty-ledger')->name('loyalty-ledger.')->group(function() {
         Route::get('/', LoyaltyLedger::class)->name('index')->middleware('check.permission');
     });
 
@@ -248,11 +250,17 @@ Route::group(['prefix' => 'admin','middleware' => 'admin'], function () {
         Route::get('/', BannerManager::class)->name('list')->middleware('check.permission');
     });
     
+    Route::prefix('customer/marketing')->name('customer.marketing.')->group(function() {
+        Route::get('/', CustomerMarketing::class)->name('list');
+        Route::get('/photo', CustomerMarketingPhoto::class)->name('photo');
+    });
+    
     Route::prefix('loyality-rule')->name('loyality-rule.')->group(function() {
         Route::get('/', LoyalityRule::class)->name('loyality_rule')->middleware('check.permission');
         Route::get('/settings', ManageSettings::class)->name('settings')->middleware('check.permission');
     });
         
+    // Customer Loyalty Related Routes End    
         
     
     Route::group(['prefix' => 'orders'], function () {
