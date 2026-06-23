@@ -13,6 +13,8 @@ use App\Models\Product;
 use App\Models\StockFabric;
 use App\Models\StockProduct;
 use App\Models\OrderStockEntry;
+use Illuminate\Support\Facades\Crypt; 
+
 
 class Helper
 {

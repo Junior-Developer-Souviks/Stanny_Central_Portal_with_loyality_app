@@ -16,10 +16,10 @@ class TransactionController extends Controller
         $staff = $request->user();
 
         /*
-        designation 15 = Airport       → show lounge transactions
-        designation 16 = Grocery       → show point transactions
-        designation 17 = Store         → show point transactions
-        designation 02 = Sales Person  → show point transactions
+            designation 15 = Airport       → show lounge transactions
+            designation 16 = Grocery       → show point transactions
+            designation 17 = Store         → show point transactions
+            designation 02 = Sales Person  → show point transactions
         */
 
        $validator = Validator::make($request->all(), [
