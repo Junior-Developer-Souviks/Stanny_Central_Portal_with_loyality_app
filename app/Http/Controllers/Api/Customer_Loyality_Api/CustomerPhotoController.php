@@ -62,7 +62,7 @@ class CustomerPhotoController extends Controller
 
             // update same record (ID remains same)
             $photo->update([
-                'photo_path'       => asset($path),
+                'photo_path'       => $path,
                 'consent_given'    => true,
                 'consent_given_at' => now(),
             ]);

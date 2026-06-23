@@ -120,7 +120,7 @@ class OrderNew extends Component
     // For Auto Save
     public $lastSavedAt = null;
     public $draftId = null;
-   
+   public $isRestoring = false;
   
     
     public function onCustomerTypeChange($value){
@@ -257,9 +257,10 @@ class OrderNew extends Component
         }
         $this->Business_type = BusinessType::all();
         $this->selectedBusinessType = BusinessType::where('title','TEXTILES')->value('id');
-        
+        $this->isRestoring = true;
         // Auto Save Code
         $this->restoreLatestDraft();
+        $this->isRestoring = false;
         $this->updateBillingAmount();
         $this->dispatch('start-auto-save');
     }
@@ -700,6 +701,7 @@ class OrderNew extends Component
             'items'                 => $this->items,
             'extra_measurement'     => $this->extra_measurement,
             'unifiedMeasurements'   => $this->unifiedMeasurements,
+            'activeTab'             => $this->activeTab,
             'isUnifiedViewActive'   => $this->isUnifiedViewActive,
     
             'salesman'              => $this->salesman,
@@ -743,6 +745,10 @@ class OrderNew extends Component
         if (!$draft || empty($draft->draft_data)) return;
     
         $data = $draft->draft_data;
+        
+        if (isset($data['activeTab'])) {
+            $this->activeTab = (int)$data['activeTab'];
+        }
         
        
     
@@ -979,6 +985,9 @@ class OrderNew extends Component
 
     public function updated($propertyName)
     {
+        if ($this->isRestoring) {
+            return; 
+        }
         $this->validateOnly($propertyName, $this->rules());
         
         // Auto Save Code 
@@ -2513,6 +2522,7 @@ protected function fillMatchingMeasurements($currentIndex, $sourceIndex)
 
     public function TabChange($value)
     {
+        if ($this->isRestoring) return;
         // dd($this->all());
         // dd($this->errorClass, $this->errorMessage);
 

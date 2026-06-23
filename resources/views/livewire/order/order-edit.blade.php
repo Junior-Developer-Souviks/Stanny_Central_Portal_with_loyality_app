@@ -46,6 +46,26 @@
             border: 1px solid #e91e63;
             margin-left: 8px;
         }
+        
+        /* Remarks Loader */
+        .remarks-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 999999 !important;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+        }
+        
+        .remarks-loading.show {
+            display: flex;
+        }
 
       
         
@@ -2019,8 +2039,11 @@
                                                             {{ $uField['title'] }} 
                                                             <span class="text-danger font-weight-bolder">[{{ $uField['short_code'] }}]</span>
                                                         </label>
-                                                        <span class="message-icon" style="cursor:pointer; font-size:14px; opacity: 0.7;" wire:click="$toggle('unifiedMeasurements.{{ $loopKey }}.show_remarks')">
+                                                        <span class="message-icon" style="cursor:pointer; font-size:14px; opacity: 0.7;" wire:click="$toggle('unifiedMeasurements.{{ $loopKey }}.show_remarks')"
+                                                        onclick="showRemarksLoader()">
                                                             <i class="fas fa-comment-alt"></i>
+                                                            
+                                                            
                                                         </span >
                                                     </div>
                                                     
@@ -2087,6 +2110,34 @@
 </div>
 
 @push('js')
+
+<script>
+function showRemarksLoader() {
+    const loader = document.createElement('div');
+    loader.className = 'remarks-loading show';
+    loader.innerHTML = `
+        <div class="loader"></div>
+        <h5>Toggling Remarks...</h5>
+    `;
+    document.body.appendChild(loader);
+
+    // Listen for Livewire finish
+    const hideLoader = () => {
+        loader.classList.remove('show');
+        setTimeout(() => loader.remove(), 300);
+        document.removeEventListener('livewire:request-finished', hideLoader);
+    };
+
+    document.addEventListener('livewire:request-finished', hideLoader);
+
+    // Safety timeout (in case event doesn't fire)
+    setTimeout(() => {
+        if (loader.parentNode) {
+            hideLoader();
+        }
+    }, 1000); // Max 2 seconds
+}
+</script>
 
 <script>
     let mediaRecorders = {};

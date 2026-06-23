@@ -25,6 +25,7 @@ class AddPaymentController extends Controller
             'payment_date'      => 'required|date',
             'next_payment_date' => 'nullable|date',
             'deposit_date'      => 'nullable|date',
+            'remarks'           => 'required'
         ];
 
         if ($request->payment_type === 'cheque') {
@@ -45,7 +46,6 @@ class AddPaymentController extends Controller
         if ($request->payment_type === 'digital_payment') {
             $rules['transaction_no']    = 'required|string|max:255';
             $rules['withdrawal_charge'] = 'required|numeric|min:0';
-            $rules['bank_name']         = 'required|string|max:255';
         }
 
         Validator::make($request->all(), $rules)->validate();
@@ -95,6 +95,7 @@ class AddPaymentController extends Controller
                 'created_at'  => now(),
                 'is_ledger_added'  => 0,
                 'is_approved'       => 0,
+                'narration'    => $request->remarks
             ]);
 
             /** -----------------------------

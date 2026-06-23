@@ -530,12 +530,12 @@
                         Marketing Master
                         </a>
                     </li>
-                    <!--<li class="nav-item">-->
-                    <!--    <a class="nav-link text-white {{ request()->is('admin/customer/marketing/photo') ? 'active' : '' }}"-->
-                    <!--    href="{{ route('customer.marketing.photo') }}">-->
-                    <!--    Marketing Photo-->
-                    <!--    </a>-->
-                    <!--</li>-->
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->is('admin/customer/marketing/photo') ? 'active' : '' }}"
+                       href="{{ route('customer.marketing.photo') }}">
+                        Marketing Photo
+                        </a>
+                    </li>
             </ul>
           
 

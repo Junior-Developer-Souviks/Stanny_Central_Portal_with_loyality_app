@@ -14,8 +14,6 @@
         </li>
     </ul>
 
-
-
     <div class="row mb-4">
 
 
@@ -40,9 +38,6 @@
 
                     @endif
 
-
-
-
                     <div class="table-responsive">
 
 
@@ -62,9 +57,6 @@
                                 </tr>
 
                             </thead>
-
-
-
 
                             <tbody>
 
@@ -89,9 +81,6 @@
 
                                         </td>
 
-
-
-
                                         <td>
 
                                             <h6 class="text-sm">
@@ -110,9 +99,6 @@
 
                                         </td>
 
-
-
-
                                         <td>
 
                                             
@@ -129,9 +115,6 @@
 
 
                                         </td>
-
-
-
 
                                         <td>
 
@@ -162,16 +145,11 @@
 
                     </div>
 
-
-
-
                     <div class="mt-3">
 
                         {{ $photos->links() }}
 
                     </div>
-
-
 
                 </div>
 
@@ -182,14 +160,7 @@
         </div>
 
 
-
-
-
-
-
-
         <!-- RIGHT FORM -->
-
 
         <div class="col-lg-4">
 
@@ -206,13 +177,7 @@
 
                     </h5>
 
-
-
-
-
                     @if($photoId)
-
-
 
                         <div class="mb-3">
 
@@ -235,8 +200,6 @@
                                         wire:model="selectedMarketing"
                                         value="{{ $type->id }}">
 
-
-
                                     <label>
 
                                         {{ $type->name }}
@@ -253,10 +216,6 @@
                         </div>
 
 
-
-
-
-
                         <button
                             wire:click="update"
                             class="btn btn-success select-md">
@@ -264,9 +223,6 @@
                             Update
 
                         </button>
-
-
-
 
                         <button
                             wire:click="resetForm"
@@ -276,12 +232,7 @@
 
                         </button>
 
-
-
-
                     @else
-
-
 
                         <p class="text-muted">
 
@@ -289,12 +240,7 @@
 
                         </p>
 
-
-
                     @endif
-
-
-
 
                 </div>
 
@@ -304,11 +250,6 @@
 
         </div>
 
-
-
-
     </div>
-
-
 
 </div>

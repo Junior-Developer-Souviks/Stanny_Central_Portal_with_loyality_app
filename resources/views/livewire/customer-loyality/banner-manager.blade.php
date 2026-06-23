@@ -204,12 +204,12 @@
 
                                 </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="7" class="text-center text-secondary py-4">
-                                        No banners found. Click "Add Banner" to create one.
-                                    </td>
-                                </tr>
-                                @endforelse
+                                    <tr class="no-banner-row">
+                                        <td colspan="7" class="text-center text-secondary py-4">
+                                            No banners found. Click "Add Banner" to create one.
+                                        </td>
+                                    </tr>
+                                    @endforelse
                             </tbody>
 
                         </table>
@@ -266,34 +266,64 @@
     });
 
 
-    document.addEventListener('livewire:init', () => {
-
-        let tbody = document.querySelector("#bannerTableBody");
-
-        Sortable.create(tbody, {
-            animation: 150,
-
-            onEnd: function () {
-
-                let order = [];
-
-                document.querySelectorAll("#bannerTableBody tr")
+        document.addEventListener('livewire:init', () => {
+    
+        function initSortable() {
+    
+            let tbody = document.querySelector("#bannerTableBody");
+    
+            if (!tbody) return;
+    
+            // destroy old sortable if exists
+            if (tbody.sortable) {
+                tbody.sortable.destroy();
+            }
+    
+            tbody.sortable = Sortable.create(tbody, {
+    
+                animation: 150,
+    
+                handle: 'tr',
+    
+                filter: ".no-banner-row",
+    
+                onEnd: function () {
+    
+                    let order = [];
+    
+                    document
+                    .querySelectorAll("#bannerTableBody tr[data-id]")
                     .forEach((row, index) => {
-
+    
                         order.push({
                             id: row.dataset.id,
                             position: index + 1
                         });
-
+    
                     });
-
-                Livewire.dispatch('updateBannerOrder', {
-                    order: order
-                });
-
-            }
+    
+    
+                    if(order.length > 0){
+    
+                        Livewire.dispatch('updateBannerOrder', {
+                            order: order
+                        });
+    
+                    }
+    
+                }
+            });
+    
+        }
+    
+    
+        initSortable();
+    
+    
+        Livewire.hook('morph.updated', () => {
+            initSortable();
         });
-
+    
     });
 </script>
 @endpush
