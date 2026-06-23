@@ -69,22 +69,23 @@ class RedemptionController extends Controller
             /*
             DESIGNATION MAPPING
     
-            14 = Airport Staff → Lounge
-            15 = Grocery Staff → Points
-            16 = Store Staff   → Points
+            15 = Airport Staff → Lounge
+            16 = Grocery Staff → Points
+            17 = Store Staff   → Points
+            2 = Sales Person   → Points
             */
     
-            if ($staff->designation == 14) {
+            if ($staff->designation == 15) {
     
                 $channel = 'airport';
                 $redeemType = 'lounge';
     
-            } elseif ($staff->designation == 15) {
+            } elseif ($staff->designation == 16) {
     
                 $channel = 'grocery';
                 $redeemType = 'points';
     
-            } elseif ($staff->designation == 16) {
+            } elseif ($staff->designation == 17) {
     
                 $channel = 'store_sales';
                 $redeemType = 'points';

@@ -40,7 +40,7 @@ class IndexExpense extends Component
     {
         $auth = auth()->guard('admin')->user();
 
-        $isAuthorizedViewer = $auth->is_super_admin || ($auth->designation == 17);
+        $isAuthorizedViewer = $auth->is_super_admin || ($auth->designation == 14);
              
         $expenses = Payment::where('payment_for', 'debit')
             //  AUTH FILTER (MOST IMPORTANT PART)

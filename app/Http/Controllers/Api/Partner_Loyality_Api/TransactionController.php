@@ -16,9 +16,10 @@ class TransactionController extends Controller
         $staff = $request->user();
 
         /*
-        designation 14 = Airport  → show lounge transactions
-        designation 15 = Grocery  → show point transactions
-        designation 16 = Store    → show point transactions
+        designation 15 = Airport       → show lounge transactions
+        designation 16 = Grocery       → show point transactions
+        designation 17 = Store         → show point transactions
+        designation 02 = Sales Person  → show point transactions
         */
 
        $validator = Validator::make($request->all(), [
@@ -51,23 +52,24 @@ class TransactionController extends Controller
             ->where('redeemed_by', $staff->id); // only THIS staff's transactions
 
         // Airport staff sees lounge redemptions only
-        if ($staff->designation == 14) {
+        if ($staff->designation == 15) {
             $query->where('source', 'lounge_redemption')
                   ->where('channel', 'airport');
         }
 
         // Grocery staff sees point redemptions only
-        if ($staff->designation == 15) {
+        if ($staff->designation == 16) {
             $query->where('source', 'point_redemption')
                   ->where('channel', 'grocery');
         }
 
         // Store staff
-        if ($staff->designation == 16) {
+        if ($staff->designation == 17) {
             $query->where('source', 'point_redemption')
                   ->where('channel', 'store_sales');
         }
 
+        // 
         if ($staff->designation == 2) {
             $query->where('source', 'point_redemption')
                   ->where('channel', 'sales_person');

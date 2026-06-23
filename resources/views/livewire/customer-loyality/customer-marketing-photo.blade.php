@@ -173,12 +173,16 @@
 
                     <h5>
 
-                        Assign Marketing
-
+                        Assign Marketing 
+                            Types
+                        <a class="btn btn-outline-success select-md" href="{{ route('customer.marketing.list') }}">
+                            Add 
+                            
+                        </a>
                     </h5>
-
+          
                     @if($photoId)
-
+  
                         <div class="mb-3">
 
 
