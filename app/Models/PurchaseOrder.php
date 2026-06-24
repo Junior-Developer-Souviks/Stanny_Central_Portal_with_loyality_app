@@ -25,7 +25,9 @@ class PurchaseOrder extends Model
         'is_good_in', 
         'goods_in_type', 
         'status',
-        'is_approved'
+        'is_approved',
+        'created_by'
+
     ];
 
      // Relationship with Supplier

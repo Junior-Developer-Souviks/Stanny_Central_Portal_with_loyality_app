@@ -136,7 +136,6 @@ class AuthController extends Controller
                 'points'      => $user->total_points,
                 'source'      => 'Welcome Bonus',
                 'channel'      => 'Bonus Point',
-                'source'      => 'bonus',
                 'expiry_date' => now()->addDays($expiryDays)
             ]);
     

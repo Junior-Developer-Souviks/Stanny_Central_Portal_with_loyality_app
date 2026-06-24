@@ -490,7 +490,7 @@
                 </li>
             @endif
 
-             {{-- @if ($this->hasPermissionByParent('report_management')) --}}
+            @if ($this->hasPermissionByParent('banner_management'))
             {{-- Banner management --}}
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->is('admin/banners*') ? 'active bg-gradient-primary' : '' }}"
@@ -501,18 +501,19 @@
                     <span class="nav-link-text ms-1">Banner Management</span>
                 </a>
             </li>
-            <ul id="BannerManagementSubmenu" class="collapse list-unstyled ms-4 {{ request()->is('admin/banners*') ? 'show' : '' }}">
-                {{-- @if ($this->hasPermission('staff_listing')) --}}
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/banners') ? 'active' : '' }}"
-                        href="{{ route('banners.list') }}">
-                        Banners
-                        </a>
-                    </li>
-                {{-- @endif --}}
-            </ul>
-            {{-- @endif --}}
+               @if ($this->hasPermission('banner_list'))
+                <ul id="BannerManagementSubmenu" class="collapse list-unstyled ms-4 {{ request()->is('admin/banners*') ? 'show' : '' }}">
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->is('admin/banners') ? 'active' : '' }}"
+                            href="{{ route('banners.list') }}">
+                            Banners
+                            </a>
+                        </li>
+                </ul>
+                @endif
+            @endif
             
+            @if ($this->hasPermissionByParent('customer_marketing'))
             {{-- Customer marketing --}}
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->is('admin/customer/marketing*') ? 'active bg-gradient-primary' : '' }}"
@@ -524,22 +525,26 @@
                 </a>
             </li>
             <ul id="CustomerMarketingSubmenu" class="collapse list-unstyled ms-4 {{ request()->is('admin/customer/marketing*') ? 'show' : '' }}">
+                @if ($this->hasPermission('customer_marketing_list'))
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/customer/marketing') ? 'active' : '' }}"
                         href="{{ route('customer.marketing.list') }}">
                         Marketing Master
                         </a>
                     </li>
+                @endif
+                @if ($this->hasPermission('customer_marketing_photo_assign'))
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/customer/marketing/photo') ? 'active' : '' }}"
                        href="{{ route('customer.marketing.photo') }}">
                         Marketing Photo
                         </a>
                     </li>
+                @endif
             </ul>
+            @endif
           
-
-              {{-- @if ($this->hasPermissionByParent('report_management')) --}}
+            @if ($this->hasPermissionByParent('loyalty_ledger'))
             {{-- Loyalty management --}}
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->is('admin/loyalty-ledger*') ? 'active bg-gradient-primary' : '' }}"
@@ -551,19 +556,16 @@
                 </a>
             </li>
             <ul id="LedgerManagementSubmenu" class="collapse list-unstyled ms-4 {{ request()->is('admin/loyalty-ledger*') ? 'show' : '' }}">
-                {{-- @if ($this->hasPermission('staff_listing')) --}}
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->is('admin/loyalty-ledger') ? 'active' : '' }}"
-                        href="{{ route('loyalty-ledger.index') }}">
-                         Ledger
-                        </a>
-                    </li>
-                {{-- @endif --}}
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->is('admin/loyalty-ledger') ? 'active' : '' }}"
+                    href="{{ route('loyalty-ledger.index') }}">
+                        Ledger
+                    </a>
+                </li>
             </ul>
-            {{-- @endif --}}
-            
+            @endif
            
-           {{-- @if ($this->hasPermissionByParent('report_management')) --}}
+            @if ($this->hasPermissionByParent('loyality_management'))
             {{-- Loyality management --}}
             <li class="nav-item">
                 <a class="nav-link text-white {{ request()->is('admin/loyality-rule*') ? 'active bg-gradient-primary' : '' }}"
@@ -574,24 +576,26 @@
                     <span class="nav-link-text ms-1">Loyality Management</span>
                 </a>
             </li>
+
             <ul id="LoyalityManagementSubmenu" class="collapse list-unstyled ms-4 {{ request()->is('admin/loyality-rule*') ? 'show' : '' }}">
-              {{--  @if ($this->hasPermission('staff_listing')) --}}
+                @if ($this->hasPermission('loyality_rule_index'))
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/report/loyality-rule') ? 'active' : '' }}"
                         href="{{ route('loyality-rule.loyality_rule') }}">
                           Loyality Rule
                         </a>
                     </li>
+                @endif
+                @if ($this->hasPermission('loyality_rule_settings'))
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->is('admin/loyality-rule/settings') ? 'active' : '' }}"
                         href="{{ route('loyality-rule.settings') }}">
                           Settings
                         </a>
                     </li>
-              {{--  @endif  --}}
+                @endif
             </ul>
-          {{--  @endif  --}}
-            
+            @endif
             
         </ul>
     </div>

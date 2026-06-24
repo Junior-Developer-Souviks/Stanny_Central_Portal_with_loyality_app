@@ -77,6 +77,15 @@
                             </button>
                         </div>
                     </div>
+                     <div wire:loading wire:target="bulkUploadOpeningStock" class="text-center py-3">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Uploading...</span>
+                            </div>
+
+                            <p class="mt-2 text-success">
+                                Uploading file, please wait...
+                            </p>
+                    </div>
                     
 
                     <div class="modal-footer">
@@ -84,7 +93,7 @@
                             Close
                         </button>
 
-                        <button class="btn btn-success" wire:click="bulkUploadOpeningStock">
+                        <button type="submit" class="btn btn-success">
                             Upload & Process
                         </button>
                     </div>
@@ -239,5 +248,25 @@
             }
         });
     });
+
+
+    
 </script>
+    <script>
+    window.addEventListener('closeModal', event => {
+
+        let modalElement = document.getElementById('openingStockModal');
+
+        let modal = bootstrap.Modal.getInstance(modalElement);
+
+        if(modal){
+            modal.hide();
+        }
+
+        // remove backdrop if stuck
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        document.body.classList.remove('modal-open');
+
+    });
+    </script>
 @endpush

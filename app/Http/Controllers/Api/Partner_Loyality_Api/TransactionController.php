@@ -69,7 +69,7 @@ class TransactionController extends Controller
                   ->where('channel', 'store_sales');
         }
 
-        // 
+        // Sales Person
         if ($staff->designation == 2) {
             $query->where('source', 'point_redemption')
                   ->where('channel', 'sales_person');

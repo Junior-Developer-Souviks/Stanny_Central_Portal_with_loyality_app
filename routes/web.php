@@ -242,7 +242,7 @@ Route::group(['prefix' => 'admin','middleware' => 'admin'], function () {
     });
     
   // Customer Loyalty Related Routes Start
-   Route::prefix('loyalty-ledger')->name('loyalty-ledger.')->group(function() {
+    Route::prefix('loyalty-ledger')->name('loyalty-ledger.')->group(function() {
         Route::get('/', LoyaltyLedger::class)->name('index')->middleware('check.permission');
     });
 
@@ -251,8 +251,8 @@ Route::group(['prefix' => 'admin','middleware' => 'admin'], function () {
     });
     
     Route::prefix('customer/marketing')->name('customer.marketing.')->group(function() {
-        Route::get('/', CustomerMarketing::class)->name('list');
-        Route::get('/photo', CustomerMarketingPhoto::class)->name('photo');
+        Route::get('/', CustomerMarketing::class)->name('list')->middleware('check.permission');
+        Route::get('/photo', CustomerMarketingPhoto::class)->name('photo')->middleware('check.permission');
     });
     
     Route::prefix('loyality-rule')->name('loyality-rule.')->group(function() {

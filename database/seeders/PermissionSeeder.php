@@ -93,6 +93,10 @@ class PermissionSeeder extends Seeder
 
             ['parent_name' => 'loyalty_ledger', 'name' => 'loyalty_ledger', 'route' => 'loyalty-ledger.index'],
 
+            ['parent_name' => 'customer_marketing', 'name' => 'customer_marketing_list', 'route' => 'customer.marketing.list'],
+
+            ['parent_name' => 'customer_marketing', 'name' => 'customer_marketing_photo_assign', 'route' => 'customer.marketing.photo'],
+
             
 
 

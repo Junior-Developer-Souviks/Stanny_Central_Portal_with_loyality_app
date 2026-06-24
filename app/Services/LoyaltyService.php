@@ -91,7 +91,7 @@ class LoyaltyService
                 'lounge_after' => $loungeAfter,
 
                 'lounge_used' => 0,
-
+                
                 'source' => 'Full_payment',
                 'channel' => 'lounge',
                 'reference_id' => $invoice->id,

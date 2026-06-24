@@ -34,7 +34,7 @@ class PurchaseOrderIndex extends Component
         $this->suppliers = Supplier::where('status',1)->where('deleted_at',NULL)->get();
     }
 
-    public function bulkUploadOpeningStock()
+   public function bulkUploadOpeningStock()
    {
     $this->validate();
 
@@ -52,7 +52,7 @@ class PurchaseOrderIndex extends Component
             'goods_in_type' => 'opening_stock',
             'is_approved'   => 1,
             'status'        => 1,
-            'created_by'    => 1,
+            'created_by'    => Auth::guard('admin')->id(),
             'total_price'   => 0,
             'address'       => $supplier->billing_address,
             'city'          => $supplier->billing_city,
@@ -63,16 +63,25 @@ class PurchaseOrderIndex extends Component
         ]);
 
         $fabricIds = [];
-
+        $duplicateCheck = [];
+        
         foreach ($rows as $index => $row) {
             // if ($index === 0) continue; // Skip the header row
 
             $rowNumber = $index + 1;
 
             // Normalize column names
+            // $row = array_combine(
+            //     array_map(fn($key) => strtolower(str_replace([" ", "'", ".", "`"], "", trim($key))), array_keys($row)),
+            //     array_map('trim', $row)
+            // );
             $row = array_combine(
-                array_map(fn($key) => strtolower(str_replace([" ", "'", ".", "`"], "", trim($key))), array_keys($row)),
-                array_map('trim', $row)
+                array_map(function ($key) {
+                    return strtolower(str_replace([" ", "'", ".", "`"], "", trim($key)));
+                }, array_keys($row)),
+                array_map(function ($value) {
+                    return trim($value);
+                }, $row)
             );
 
             $style  = $row['style'] ?? '';
@@ -136,8 +145,15 @@ class PurchaseOrderIndex extends Component
         foreach ($rows as $index => $row) {
             if ($index === 0) continue;
 
+            // $row = array_combine(
+            //     array_map(fn($key) => strtolower(str_replace([" ", "'", ".", "`"], "", trim($key))), array_keys($row)),
+            //     array_map('trim', $row)
+            // );
+            
             $row = array_combine(
-                array_map(fn($key) => strtolower(str_replace([" ", "'", ".", "`"], "", trim($key))), array_keys($row)),
+                array_map(function ($key) {
+                    return strtolower(str_replace([" ", "'", ".", "`"], "", trim($key)));
+                }, array_keys($row)),
                 array_map('trim', $row)
             );
 
