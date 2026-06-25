@@ -182,6 +182,7 @@
                                 class="form-control select-md bg-white">
                                 <option value="">All Channels</option>
                                 <option value="store">Store</option>
+                                <option value="sales_person">Sales Person</option>
                                 <option value="grocery">Grocery</option>
                                 <option value="airport">Airport Lounge</option>
                             </select>

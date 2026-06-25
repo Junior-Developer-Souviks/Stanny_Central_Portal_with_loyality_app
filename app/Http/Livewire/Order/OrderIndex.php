@@ -222,7 +222,7 @@ class OrderIndex extends Component
         ->when(!empty($this->created_by), function ($query) {
             $query->whereIn('created_by', $this->created_by);
         })
-        // ->when($this->created_by, fn($query) => $query->where('created_by', $this->created_by)) // Filter by creator
+       
         ->when($this->start_date, fn($query) => $query->whereDate('created_at', '>=', $this->start_date)) // Start date filter
         ->when($this->end_date, fn($query) => $query->whereDate('created_at', '<=', $this->end_date)) // End date filter
         
@@ -238,17 +238,7 @@ class OrderIndex extends Component
             }
         })
 
-    //   ->when(!$auth->is_super_admin, function ($query) use ($auth) {
-    //         $query->where(function ($subQuery) use ($auth) {
-    //             $subQuery->where('created_by', $auth->id)
-    //                     ->orWhere('team_lead_id', $auth->id);
-                
-    //             // If user is TL, show all approved orders
-    //             if ($auth->designation == 4) {
-    //                 $subQuery->orWhereIn('status', ['Partial Approved By TL', 'Fully Approved By TL','Fully Approved By Admin','Approval Pending from TL','Partial Approved By Admin','Partial Delivered to Customer','Fully Approved By Admin','Ready for Delivery','Cancelled','On Hold','Returned','Received by Sales Team','Received at Production','Partial Delivered By Production','Fully Delivered By Production']);
-    //             }
-    //         });
-    //     })
+   
      ->when(!$auth->is_super_admin, function ($query) use ($auth) {
     $query->where(function ($subQuery) use ($auth) {
         $subQuery->where('created_by', $auth->id)
